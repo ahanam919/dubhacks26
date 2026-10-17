@@ -2,6 +2,7 @@ export interface ConceptDef { id: string; label: string; aliases?: string[] }
 
 export interface MenuItemDraft {
   name: string; description?: string; priceCents?: number; size?: string;
+  category?: string;
   confidence?: "high" | "medium" | "low";
 }
 
@@ -11,8 +12,11 @@ export interface ExtractMenuInput {
   imageUrls?: string[];
   images?: { mimeType: string; dataBase64: string }[]; // for photos teammates take
 }
-export interface ExtractMenuResult { items: MenuItemDraft[]; notes?: string; error?: string }
-
+export interface ExtractMenuResult {
+  items: MenuItemDraft[]; notes?: string; error?: string;
+  milkOptions?: string[]; extras?: string[];
+}
+export interface MatchItem { name: string; description?: string; category?: string }
 export interface MatchConceptResult {
   conceptId: string | null; confidence: number; attributes: Record<string, unknown>;
 }
