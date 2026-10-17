@@ -19,3 +19,5 @@ __pycache__/
 
 # logs
 *.log
+
+tiger-cloud-*-credentials*
