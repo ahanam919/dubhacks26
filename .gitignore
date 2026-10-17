@@ -1,0 +1,21 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# dependencies
+node_modules/
+
+# builds and caches
+dist/
+build/
+.expo/
+.DS_Store
+
+# python (if the backend uses it)
+__pycache__/
+*.pyc
+.venv/
+
+# logs
+*.log
