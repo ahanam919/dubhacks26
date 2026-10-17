@@ -163,3 +163,13 @@ SELECT add_continuous_aggregate_policy('search_counts_hourly',
   start_offset      => INTERVAL '1 day',
   end_offset        => INTERVAL '1 minute',
   schedule_interval => INTERVAL '1 minute');
+
+-- ---------- menu_item price provenance ----------
+-- price_cents stays nullable: NULL means "price not listed", never $0.
+-- Whenever the worker sets price_cents it must also set price_source
+-- (e.g. 'menu_page', 'google_places', 'estimated'; list TBD with AI teammate).
+ALTER TABLE menu_item ADD COLUMN price_source text;
+
+ALTER TABLE menu_item
+  ADD CONSTRAINT menu_item_price_positive
+  CHECK (price_cents IS NULL OR price_cents > 0);
