@@ -36,3 +36,28 @@ What changed during tuning: the eval originally fired calls back to back and hit
 
 - Leon Coffee House: 36 items, 0 errors, verified hook, geofence message with the `{minutes}` placeholder intact.
 - Price comparison is not yet exercised on real data: the Leon menu has no prices. Waiting on menus with prices from teammates.
+## Sun Oct 18, 2026: verifier, clean rerun
+
+Command: `npx tsx ai/eval/run-verifier.ts --make` (15 planted cases on the Leon Coffee House source, calls spaced out).
+
+- Correct: **15/15**
+- Lies that got through: **0**
+- True hooks blocked: **0**
+- API errors: **0**
+- All 9 planted lies were blocked: 5 by the rule layer (wrong years 2015 and 2019, "best", "award", "only") and 4 by the model (invented "organic" and "fair-trade", "roasts all of its own beans in-house", an invented founder, "official coffee partner of the Neptune Theatre").
+- All 6 true hooks passed, including the paraphrase, the opening line, the latte-art claim, the attributed press fact and the decor line.
+- Two transient API errors during the run (a 403 and a 503 on `gemini-3.7-flash`) were absorbed by the retry inside `generateJson`, and the affected cases then returned correct verdicts.
+
+Progression on this test set: earlier runs lost cases to free-tier rate limits (10/15 with 5 API errors, then 5/15 with 10 errors, then 14/15 with 1 error). The fixes were spacing the calls out (15 seconds between API calls, one 65-second retry, early stop if two cases in a row fail) and a key with quota for the verifier model. Throughout, no planted lie got through and no true hook was blocked; errors only ever made the verifier refuse to answer, never approve.
+
+## Sun Oct 18, 2026: menu photo extraction (Leon Coffee House)
+
+Command: `AI_REAL=1 npx tsx ai/try-extract-image.ts "Leon Coffee House" samples/leon-coffee-house-menu.jpg`, then `AI_REAL=1 npx tsx scripts/build-fallback.ts`.
+
+- Input: one phone photo of the printed menu (resized to 1600 px, jpeg).
+- Model: `gemini-3.7-flash` (vision). About 38 seconds for the full menu.
+- Items read: **56**. Items with a price: **56**. API errors: **0**.
+- Price comparisons produced: **5**, all on 16 oz items, each against a chain reference row.
+- Hand spot-check against the photo: 5 rows checked (Latte or Cappuccino at 8, 12 and 16 oz: $4.20, $4.60, $4.90; Americano any size: $3.80; Deleite Espresso: $5.90). **All 5 matched.**
+- This was a spot-check of 5 of 56 rows, not a full audit. The other 51 prices were not individually checked.
+- The extractor returns `null` for any price it cannot read, rather than guessing. On this photo that did not trigger, because every price was legible.
