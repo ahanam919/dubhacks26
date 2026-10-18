@@ -41,6 +41,8 @@ export async function generateJson<T>(opts: {
   attempts?: number;
   /** Explicit model list (in order) instead of model + config fallbacks. Used by the verifier. */
   models?: string[];
+  /** Optional images sent along with the prompt. data is base64 (no data: prefix). Never logged. */
+  images?: { mimeType: string; data: string }[];
 }): Promise<T> {
   const attempts = opts.attempts ?? (opts.fast ? 1 : 2);
   const timeoutMs = opts.timeoutMs ?? (opts.fast ? 5000 : config.timeoutMs);
@@ -60,6 +62,17 @@ export async function generateJson<T>(opts: {
     models = active.length > 0 ? active : all;
   }
 
+  // Text only: a plain string, exactly as before. With images: one user turn made of a text part plus image parts.
+  const contents = opts.images && opts.images.length > 0
+    ? [{
+        role: "user",
+        parts: [
+          { text: opts.prompt },
+          ...opts.images.map((img) => ({ inlineData: { mimeType: img.mimeType, data: img.data } })),
+        ],
+      }]
+    : opts.prompt;
+
   let lastErr: unknown;
   for (const model of models) {
     for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -69,7 +82,7 @@ export async function generateJson<T>(opts: {
         const res = await Promise.race([
           client.models.generateContent({
             model,
-            contents: opts.prompt,
+            contents,
             config: {
               systemInstruction: opts.system,
               responseMimeType: "application/json",

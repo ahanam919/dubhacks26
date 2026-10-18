@@ -40,7 +40,7 @@ export function htmlToText(html: string): string {
     .replace(/<\/(p|div|li|tr|h[1-6]|section|article|ul|ol|table)>|<br\s*\/?>/gi, "\n")
     .replace(/<[^>]+>/g, " ")
     .replace(/&(#?\w+);/g, (m, e) => ENT[e] ?? m)
-    .replace(/[ \t ]+/g, " ")
+    .replace(/[ \t ]+/g, " ")
     .replace(/\n\s*\n+/g, "\n")
     .trim();
 }
