@@ -32,12 +32,11 @@ export default function ShopScreen() {
     );
   }
 
-  const { shop, item, comparison, photos, distance_min, open_now } = result;
+  const { shop, item, comparison, distance_min, open_now } = result;
   const action = primaryActionFor(shop);
   const savings = savingsLabel(comparison);
   const cheaper = comparison != null && comparison.delta_cents < 0;
   const hook = visibleHook(shop);
-  const attribution = photos[0]?.attributions?.[0]?.name;
 
   const onPrimary = () => {
     if (action.kind === 'order') {
@@ -53,12 +52,8 @@ export default function ShopScreen() {
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Photo area. Google photos replace this later; attribution must be shown with them. */}
-        <View style={styles.photo}>
-          <Text style={styles.photoText}>Photo coming soon</Text>
-        </View>
-        {attribution && <Text style={styles.attribution}>Photo by {attribution}</Text>}
-
+        {/* No photo area until real photos are wired up. When they are, show the
+            photographer's name from photos[n].attributions with each photo (Google requires it). */}
         <Text style={styles.title}>{shop.name}</Text>
         <TierBadge tier={shop.order_tier} />
         {shop.address && <Text style={styles.muted}>{shop.address}</Text>}
@@ -109,15 +104,6 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl, gap: 8 },
   content: { padding: spacing.lg, gap: 10 },
-  photo: {
-    height: 170,
-    borderRadius: radius.lg,
-    backgroundColor: '#D5DAE1',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  photoText: { ...font.small, color: colors.muted },
-  attribution: { fontSize: 12, color: colors.muted },
   title: { ...font.title, color: colors.ink },
   heading: { ...font.heading, color: colors.ink },
   body: { ...font.body, color: colors.ink },

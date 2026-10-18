@@ -33,10 +33,15 @@ export default function CompareScreen() {
   const { shop, item, comparison, distance_min, open_now } = result;
   const delta = comparison?.delta_cents ?? null;
 
-  let headline: string;
+  // Headline: the saved comparison when there is one. Without one but with both
+  // prices, just state the two prices side by side (no "you save" claim, since the
+  // sizes may differ). With no local price, no headline at all.
+  let headline: string | null = null;
   let tone: string = colors.muted;
   if (delta == null) {
-    headline = "Price not listed, so we can't compare";
+    if (item.price_cents != null) {
+      headline = `${formatPrice(item.price_cents)} here vs ${formatPrice(chain.approx_price_cents)} at ${chain.chain_name}`;
+    }
   } else if (delta < 0) {
     headline = `You save ${formatPrice(-delta)}`;
     tone = colors.good;
@@ -49,7 +54,7 @@ export default function CompareScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      <Text style={[styles.headline, { color: tone }]}>{headline}</Text>
+      {headline && <Text style={[styles.headline, { color: tone }]}>{headline}</Text>}
 
       <View style={styles.referenceBar}>
         <View style={styles.refLeft}>
