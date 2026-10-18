@@ -1,0 +1,7 @@
+.git
+.env
+.env.*
+tiger-cloud-*
+**/node_modules
+app
+mobile
