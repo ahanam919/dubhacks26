@@ -30,8 +30,13 @@ export interface NearbyShop {
   walkMinutes: number;
 }
 
-/** How close (meters) the user must be to a chain to count as "near" it. */
-export const CHAIN_RADIUS_M = 100;
+/**
+ * How close (meters) the user must be to a chain to count as "near" it.
+ * 200 m is about a block and a half: big enough to catch someone walking toward the
+ * door, small enough that the start pin on campus is not "near" anything.
+ * Keep in sync with CHAIN_RADIUS_M in mobile/src/components/GeofenceMap.tsx.
+ */
+export const CHAIN_RADIUS_M = 200;
 /** How far (meters) we'll suggest walking to a local shop (~10 min). */
 export const WALK_RADIUS_M = 800;
 /** Normal walking pace. */

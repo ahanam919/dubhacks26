@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { computeDestinationPoint } from "geolib";
 import {
+  CHAIN_RADIUS_M,
   type ChainLocation,
   type Point,
   type Shop,
@@ -49,16 +50,16 @@ describe("findNearbyChain", () => {
     expect(match!.distanceMeters).toBeLessThan(65);
   });
 
-  it("matches just inside the 100 m radius", () => {
-    expect(findNearbyChain(offset(BASE, 95), chains)).not.toBeNull();
+  it("matches just inside the radius", () => {
+    expect(findNearbyChain(offset(BASE, CHAIN_RADIUS_M - 5), chains)).not.toBeNull();
   });
 
-  it("does not match just outside the 100 m radius", () => {
-    expect(findNearbyChain(offset(BASE, 105), chains)).toBeNull();
+  it("does not match just outside the radius", () => {
+    expect(findNearbyChain(offset(BASE, CHAIN_RADIUS_M + 5), chains)).toBeNull();
   });
 
-  it("does not match 300 m away", () => {
-    expect(findNearbyChain(offset(BASE, 300), chains)).toBeNull();
+  it("does not match 400 m away", () => {
+    expect(findNearbyChain(offset(BASE, 400), chains)).toBeNull();
   });
 
   it("picks the closer chain when two are in range", () => {
