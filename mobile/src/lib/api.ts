@@ -1,10 +1,9 @@
-import { Platform } from 'react-native';
+import { API_URL } from './config';
 
-// Android emulator: the host Mac is 10.0.2.2. iOS simulator: localhost works.
-// Physical phone or deployed server: set EXPO_PUBLIC_API_URL (for example http://192.168.1.20:3000).
-const API_BASE =
-  process.env.EXPO_PUBLIC_API_URL ??
-  Platform.select({ android: 'http://10.0.2.2:3000', default: 'http://localhost:3000' });
+// Same server as the rest of the app (lib/config.ts): the deployed API unless
+// EXPO_PUBLIC_API_URL points somewhere else, e.g. http://10.0.2.2:3000 for a server
+// running on this laptop (Android emulator) or http://localhost:3000 (iOS simulator).
+const API_BASE = API_URL;
 
 export type OrderStatus = 'placed' | 'accepted' | 'ready' | 'cancelled';
 
