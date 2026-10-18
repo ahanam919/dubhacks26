@@ -3,6 +3,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { pool } from "./db";
 import { geofenceMock } from "./geofence/mockRoutes";
+import { orderRoutes } from "./orders/routes";
 // When your teammate's real routes exist, swap geofenceMock for her plugin:
 // import { geofenceRoutes } from "./geofence/routes";
 
@@ -19,6 +20,7 @@ app.get("/health/db", async () => {
 });
 
 await app.register(geofenceMock, { prefix: "/geofence" });
+await app.register(orderRoutes);
 
 // Queues an ingestion job. The worker does the slow work in the background.
 // The token stops strangers from queuing jobs that spend your Gemini and Google quota.
