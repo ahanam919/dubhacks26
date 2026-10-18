@@ -6,6 +6,7 @@ import {
 } from "../../../ai";
 import { getDetails, priceLevelToInt, type PlaceDetails } from "./places";
 import { fetchPage, findMenuLinks, isOrderingHost } from "./web";
+import { closest } from "./similar";
 
 const CONCEPT_MIN = 0.6; // below this a match is treated as "no concept"
 const MIN_ITEMS = 5;     // stop fetching more pages once we have this many items
@@ -79,13 +80,23 @@ export async function runIngest(payload: Record<string, unknown>): Promise<void>
 
   // 5. Price comparison against every chain reference we have.
   const { rows: refs } = await pool.query(
-    `SELECT id, chain_name, concept_id, size, approx_price_cents, as_of_date FROM chain_reference`,
+    `SELECT id, chain_name, item_name, concept_id, size, approx_price_cents, as_of_date, is_featured FROM chain_reference`,
   );
   type Best = { chain: string; itemId: string; itemName: string; priceCents: number; diff: number };
   const best = new Map<string, Best>(); // per chain: the most favorable comparison
   for (const row of rows) {
     if (!row.conceptId) continue;
-    for (const ref of refs.filter((r) => r.concept_id === row.conceptId)) {
+    // Per chain, compare against the chain item whose NAME is closest, among rows for this concept.
+    const sameConcept = refs.filter((r) => r.concept_id === row.conceptId);
+    const chosen = [...new Set(sameConcept.map((r) => r.chain_name as string))]
+      .map((c) => closest(row.name, sameConcept.filter((r) => r.chain_name === c)))
+      .filter((r): r is NonNullable<typeof r> => r !== null);
+    // Rows for this item that point at a chain item no longer chosen are stale.
+    await pool.query(
+      `DELETE FROM price_comparison WHERE menu_item_id = $1 AND chain_reference_id <> ALL($2::int[])`,
+      [row.id, chosen.map((r) => r.id)],
+    );
+    for (const ref of chosen) {
       const res = await comparePrice({
         chain: ref.chain_name,
         local: { name: row.name, priceCents: row.priceCents, size: row.size },
