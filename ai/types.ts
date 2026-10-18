@@ -30,8 +30,8 @@ export interface MakeHookResult {
 }
 
 export interface ParseQueryResult {
-  itemConcept: string | null; chainAnchor?: string; dietary: string[]; size?: string;
-  needsClarification?: boolean; clarifyingQuestion?: string;
+    itemConcept: string | null; chainAnchor?: string; dietary: string[]; size?: string;
+    needsClarification?: boolean; clarifyingQuestion?: string; error?: string;
 }
 export interface ParseQueryOptions { timeoutMs?: number }
 
