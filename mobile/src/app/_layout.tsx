@@ -30,6 +30,7 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="explore" options={{ title: 'Simulate' }} />
         <Stack.Screen name="results" options={{ title: 'Results' }} />
         <Stack.Screen
           name="shop/[id]"
