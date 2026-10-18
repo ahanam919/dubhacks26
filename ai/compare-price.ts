@@ -2,6 +2,7 @@ import type { ComparePriceInput, ComparePriceResult } from "./types";
 
 // Pure code, no LLM. Returns null when not comparable.
 const SIMILAR_CENTS = 25;   // within a quarter = "similar"
+const APPROX_SIMILAR_PCT = 0.12; // for estimated chain prices, differences under 12% read as "similar"
 const CLOSE_OZ = 2;         // within 2 oz = "close"
 
 const NAMED_OZ: Record<string, number> = {
@@ -39,13 +40,26 @@ export function comparePrice(
     sizeMatch = "close";
   } else return null;
 
+  // An estimated chain price is not exact, so say so and use a wider "similar" band.
+  const approximate = chainRef.approximate === true;
+  const similarBand = approximate
+    ? Math.max(SIMILAR_CENTS, Math.round(chainRef.priceCents * APPROX_SIMILAR_PCT))
+    : SIMILAR_CENTS;
+
   const priceDiffCents = local.priceCents - chainRef.priceCents;
-  const verdict = Math.abs(priceDiffCents) < SIMILAR_CENTS ? "similar"
+  const verdict = Math.abs(priceDiffCents) < similarBand ? "similar"
     : priceDiffCents < 0 ? "cheaper" : "pricier";
-  const vs = `${usd(local.priceCents)} vs ${usd(chainRef.priceCents)}`;
-  const core = verdict === "similar" ? `About the same as ${chain} (${vs})`
-    : `${usd(priceDiffCents)} ${verdict === "cheaper" ? "less" : "more"} than ${chain} (${vs})`;
+
+  const vs = approximate
+    ? `${usd(local.priceCents)} vs est. ${usd(chainRef.priceCents)}`
+    : `${usd(local.priceCents)} vs ${usd(chainRef.priceCents)}`;
+  const more = verdict === "cheaper" ? "less" : "more";
+  const core = verdict === "similar"
+    ? `About the same as ${chain} (${vs})`
+    : approximate
+      ? `About ${usd(priceDiffCents)} ${more} than ${chain} (${vs})`
+      : `${usd(priceDiffCents)} ${more} than ${chain} (${vs})`;
   const sentence = core + (sizeMatch === "close" ? ", sizes are close but not identical." : ".");
 
-  return { chainReferenceId: chainRef.id, sizeMatch, priceDiffCents, verdict, sentence };
+  return { chainReferenceId: chainRef.id, sizeMatch, priceDiffCents, verdict, sentence, approximate };
 }

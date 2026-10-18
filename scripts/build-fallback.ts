@@ -13,6 +13,8 @@ if (process.env.AI_REAL !== "1") {
 
 const concepts: ConceptDef[] = JSON.parse(readFileSync("seed/concept.json", "utf8"));
 const chainRows: any[] = JSON.parse(readFileSync("seed/chain_reference.json", "utf8"));
+// Rows without price_verified: true are estimates. They still compare, but are labeled approximate.
+console.log(`chain rows: ${chainRows.length} total, ${chainRows.filter((r) => r.price_verified === true).length} verified, the rest approximate`);
 
 const read = (p: string) => (existsSync(p) ? readFileSync(p, "utf8") : null);
 const titleCase = (s: string) => s.split("-").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
@@ -58,6 +60,7 @@ async function main() {
             priceCents: ref.approx_price_cents,
             size: ref.size,
             asOf: ref.as_of_date,
+            approximate: ref.price_verified !== true,
           },
         });
       }

@@ -8,7 +8,7 @@ const load = (f: string) => JSON.parse(readFileSync(seedDir + f, "utf8"));
 
 type Concept = { id: string; name: string; aliases?: string[] };
 type ChainRef = {
-  chain_name: string; concept_id: string; size: string;
+  chain_name: string; item_name?: string | null; concept_id: string; size: string;
   approx_price_cents: number; as_of_date: string;
   source_url?: string | null; is_featured?: boolean;
 };
@@ -33,21 +33,21 @@ async function main() {
       await client.query(
         `INSERT INTO concept (id, name, aliases) VALUES ($1, $2, $3)
          ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, aliases = EXCLUDED.aliases`,
-        [c.id, c.name, c.aliases ?? []]
+        [c.id, c.name, c.aliases ?? []],
       );
     }
     for (const r of refs) {
       await client.query(
         `INSERT INTO chain_reference
-           (chain_name, concept_id, size, approx_price_cents, as_of_date, source_url, is_featured)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
-         ON CONFLICT (chain_name, concept_id, size) DO UPDATE SET
+           (chain_name, item_name, concept_id, size, approx_price_cents, as_of_date, source_url, is_featured)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         ON CONFLICT (chain_name, concept_id, size, (coalesce(item_name, ''))) DO UPDATE SET
            approx_price_cents = EXCLUDED.approx_price_cents,
            as_of_date = EXCLUDED.as_of_date,
            source_url = EXCLUDED.source_url,
            is_featured = EXCLUDED.is_featured`,
-        [r.chain_name, r.concept_id, r.size, r.approx_price_cents, r.as_of_date,
-         r.source_url ?? null, r.is_featured ?? false]
+        [r.chain_name, r.item_name ?? null, r.concept_id, r.size, r.approx_price_cents, r.as_of_date,
+         r.source_url ?? null, r.is_featured ?? false],
       );
     }
     await client.query("COMMIT");
