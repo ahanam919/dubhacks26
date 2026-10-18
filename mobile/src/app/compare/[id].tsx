@@ -5,18 +5,6 @@ import { formatDateOnly, formatPrice, visibleHook } from '../../lib/format';
 import { colors, font, radius, spacing } from '../../lib/theme';
 import { useAsync } from '../../lib/useAsync';
 
-function Row({ label, chain, local }: { label: string; chain: string; local: string }) {
-  return (
-    <View style={styles.row}>
-      <Text style={styles.rowLabel}>{label}</Text>
-      <View style={styles.cells}>
-        <Text style={[styles.cell, styles.cellChain]}>{chain}</Text>
-        <Text style={[styles.cell, styles.cellLocal]}>{local}</Text>
-      </View>
-    </View>
-  );
-}
-
 export default function CompareScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, loading } = useAsync(
@@ -45,7 +33,6 @@ export default function CompareScreen() {
   const { shop, item, comparison, distance_min, open_now } = result;
   const delta = comparison?.delta_cents ?? null;
 
-  // The headline is computed from data, never typed in.
   let headline: string;
   let tone: string = colors.muted;
   if (delta == null) {
@@ -63,26 +50,41 @@ export default function CompareScreen() {
   return (
     <ScrollView contentContainerStyle={styles.content}>
       <Text style={[styles.headline, { color: tone }]}>{headline}</Text>
-      <Text style={styles.muted}>
-        Chain price is a reference from {formatDateOnly(chain.as_of_date)}. Local price shown with its last check.
-      </Text>
 
-      <View style={styles.headRow}>
-        <View style={styles.spacer} />
-        <View style={styles.cells}>
-          <Text style={[styles.cell, styles.head]}>{chain.chain_name}</Text>
-          <Text style={[styles.cell, styles.head]} numberOfLines={2}>
-            {shop.name}
-          </Text>
+      <View style={styles.referenceBar}>
+        <View style={styles.refLeft}>
+          <Text style={styles.chainName}>{chain.chain_name}</Text>
+          <Text style={styles.refMeta}>{chain.size} · Reference as of {formatDateOnly(chain.as_of_date)}</Text>
+        </View>
+        <View style={styles.refRight}>
+          <Text style={styles.refPrice}>{formatPrice(chain.approx_price_cents)}</Text>
         </View>
       </View>
 
-      <View style={styles.table}>
-        <Row label="Item" chain={`${chain.size}`} local={item.name} />
-        <Row label="Price" chain={formatPrice(chain.approx_price_cents)} local={formatPrice(item.price_cents)} />
-        <Row label="Walk" chain="Not compared" local={`${distance_min} min`} />
-        <Row label="Open" chain="Not compared" local={open_now ? 'Open now' : 'Closed'} />
-        <Row label="Why go" chain="Not compared" local={visibleHook(shop) ?? 'No verified note yet'} />
+      <View style={styles.localCard}>
+        <View style={styles.localHeader}>
+          <Text style={styles.localName}>{shop.name}</Text>
+          <Text style={styles.localItem}>{item.name}</Text>
+        </View>
+
+        <View style={styles.table}>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Price</Text>
+            <Text style={styles.rowValue}>{formatPrice(item.price_cents)}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Walk</Text>
+            <Text style={styles.rowValue}>{distance_min} min</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Open</Text>
+            <Text style={[styles.rowValue, !open_now && styles.closed]}>{open_now ? 'Open now' : 'Closed'}</Text>
+          </View>
+          <View style={[styles.row, { borderBottomWidth: 0 }]}>
+            <Text style={styles.rowLabel}>Why go</Text>
+            <Text style={styles.rowValue}>{visibleHook(shop) ?? 'No verified note yet'}</Text>
+          </View>
+        </View>
       </View>
     </ScrollView>
   );
@@ -90,31 +92,54 @@ export default function CompareScreen() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl, gap: 8 },
-  content: { padding: spacing.lg, gap: 12 },
+  content: { padding: spacing.lg, gap: spacing.md },
+
   headline: { ...font.display },
   heading: { ...font.title, color: colors.ink },
   muted: { ...font.small, color: colors.muted },
-  spacer: { width: 60 },
-  headRow: { flexDirection: 'row', alignItems: 'flex-end', marginTop: 8 },
-  table: {
+
+  referenceBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.chain,
+    borderRadius: radius.lg,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  refLeft: { gap: 2 },
+  refRight: { alignItems: 'flex-end' },
+  chainName: { ...font.heading, color: colors.chainText },
+  refMeta: { fontSize: 12, color: colors.chainMuted },
+  refPrice: { ...font.title, color: colors.chainText },
+
+  localCard: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.line,
     overflow: 'hidden',
   },
+  localHeader: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+    gap: 2,
+  },
+  localName: { ...font.heading, color: colors.ink },
+  localItem: { ...font.small, color: colors.muted },
+
+  table: { paddingHorizontal: 14 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
   },
-  rowLabel: { width: 60, ...font.small, color: colors.muted },
-  cells: { flex: 1, flexDirection: 'row', gap: 8 },
-  cell: { flex: 1, ...font.body },
-  cellChain: { color: colors.muted },
-  cellLocal: { color: colors.ink, fontWeight: '600' },
-  head: { ...font.heading, color: colors.ink },
+  rowLabel: { ...font.small, color: colors.muted },
+  rowValue: { ...font.body, color: colors.ink, fontWeight: '600', maxWidth: '70%', textAlign: 'right' },
+  closed: { color: colors.warn },
 });
