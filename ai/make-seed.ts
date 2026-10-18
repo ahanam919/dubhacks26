@@ -14,19 +14,17 @@ const refPath = "seed/chain_reference.json";
 if (existsSync(refPath)) {
   console.log(`${refPath} exists, left untouched`);
 } else {
+  // Field names match the chain_reference table. No id: the table's id is a serial.
   const template = [
     {
-      id: "sbux-psl",
-      chain: "Starbucks",
-      item_name: "Pumpkin Spice Latte",
+      chain_name: "Starbucks",
       concept_id: "pumpkin_spice_latte",
       size: "grande 16oz",
-      price_cents: null,            // FILL IN from the Starbucks app (U Village)
-      as_of: null,                  // FILL IN, YYYY-MM-DD
-      source: "Starbucks app, U Village",
+      approx_price_cents: 645,      // pre-tax, Starbucks app at U Village
+      as_of_date: "2026-10-17",
       is_featured: true,
     },
   ];
   writeFileSync(refPath, JSON.stringify(template, null, 2) + "\n");
-  console.log(`${refPath}: template written, price_cents and as_of are blank`);
+  console.log(`${refPath}: template written, prefilled, update price and date if they change`);
 }
