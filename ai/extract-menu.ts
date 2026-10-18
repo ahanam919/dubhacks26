@@ -60,7 +60,8 @@ export async function extractMenu(input: ExtractMenuInput): Promise<ExtractMenuR
       items: out.items.map((i) => ({
         name: i.name,
         description: i.description ?? undefined,
-        priceCents: i.price == null ? undefined : Math.round(i.price * 100),
+        priceCents: i.price == null ? null : Math.round(i.price * 100),
+        priceSource: i.price == null ? undefined : ("menu_page" as const),
         size: i.size ?? undefined,
         category: i.category ?? undefined,
         confidence: i.confidence,

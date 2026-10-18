@@ -33,9 +33,9 @@ export async function matchConcepts(
   const valid = new Set(concepts.map((c) => c.id));
   const system = `You map cafe drink menu items to a fixed list of concepts.
 Concepts (id: label, aliases):
-${concepts.map((c) => `- ${c.id}: ${c.label}${c.aliases?.length ? " (" + c.aliases.join(", ") + ")" : ""}`).join("\n")}
+${concepts.map((c) => `- ${c.id}: ${c.name}${c.aliases?.length ? " (" + c.aliases.join(", ") + ")" : ""}`).join("\n")}
 Rules:
-- flavor: only an ingredient or flavor actually named in the item's name or description (e.g. nutella, mango, cinnamon). Never use descriptive phrases like "sweet and creamy", and never infer a flavor that is not printed.
+- flavor: only an ingredient or flavor actually named in the item's name or description (e.g. nutella, mango). Never use descriptive phrases like "sweet and creamy", and never infer a flavor that is not printed.
 - If the description says the drink is a different kind of drink than the concept, use null or a confidence below 0.6.
 - For each item, return the single best concept id from the list, or null if none fits. Never invent an id.
 - Use the item's category as context (e.g. an item named "Caramel" under FRAPPES is a frappe).
