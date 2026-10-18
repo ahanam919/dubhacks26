@@ -4,6 +4,7 @@ import { runIngest } from "./ingest/pipeline";
 import { runDiscover } from "./ingest/discover";
 import { runIngestChain } from "./ingest/chain";
 import { runClassifyConcepts } from "./ingest/classify";
+import { runManual } from "./ingest/manual";
 
 const POLL_MS = 3000;
 const MAX_ATTEMPTS = 3;
@@ -58,6 +59,7 @@ async function main() {
       else if (job.type === "discover_area") await runDiscover(job.payload);
       else if (job.type === "ingest_chain") await runIngestChain(job.payload);
       else if (job.type === "classify_concepts") await runClassifyConcepts(job.payload);
+      else if (job.type === "load_manual") await runManual(job.payload);
       else throw new Error(`unknown job type: ${job.type}`);
       await finish(job);
       console.log(`job ${job.id} done`);
