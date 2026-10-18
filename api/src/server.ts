@@ -5,6 +5,9 @@ import { pool } from "./db";
 import { geofenceRoutes } from "./geofence/routes";
 // The mock is kept for offline testing: swap geofenceRoutes for geofenceMock if needed.
 // import { geofenceMock } from "./geofence/mockRoutes";
+import { orderRoutes } from "./orders/routes";
+// When your teammate's real routes exist, swap geofenceMock for her plugin:
+// import { geofenceRoutes } from "./geofence/routes";
 
 const app = Fastify({ logger: true });
 await app.register(cors, { origin: true });
@@ -19,6 +22,7 @@ app.get("/health/db", async () => {
 });
 
 await app.register(geofenceRoutes, { prefix: "/geofence" });
+await app.register(orderRoutes);
 
 // Queues an ingestion job. The worker does the slow work in the background.
 // The token stops strangers from queuing jobs that spend your Gemini and Google quota.

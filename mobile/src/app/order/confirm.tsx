@@ -4,6 +4,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-nat
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '../../components/Button';
 import { getResultById } from '../../data/mock';
+import { confirmSwap } from '../../lib/api';
 import { confirmedLabel, formatPrice, savingsLabel } from '../../lib/format';
 import { colors, font, radius, spacing } from '../../lib/theme';
 import { useAsync } from '../../lib/useAsync';
@@ -19,6 +20,8 @@ export default function ConfirmScreen() {
   const { data: result, loading } = useAsync(() => getResultById(id), [id]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Created once per screen. A retry or double tap reuses it, so Square cannot create two orders.
+  const [requestId] = useState(() => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`);
 
   if (loading) {
     return (
@@ -51,18 +54,22 @@ export default function ConfirmScreen() {
   }
 
   const onConfirm = async () => {
+    if (submitting) return;
     setSubmitting(true);
     setError(null);
     try {
-      // TODO (Part 3): replace this fake delay with POST /swap/confirm { proposal_id }.
-      // The backend calls Square CreateOrder and returns { order_id, status }.
-      await new Promise((resolve) => setTimeout(resolve, 700));
+      // The backend reads the price from the database and creates the Square sandbox order.
+      const order = await confirmSwap({
+        shop_id: shop.id,
+        menu_item_id: item.id,
+        request_id: requestId,
+      });
       router.replace({
         pathname: '/order/status',
-        params: { id: shop.id, orderId: 'mock-order-1' },
+        params: { id: shop.id, orderId: order.order_id },
       });
-    } catch {
-      setError("Couldn't place the order. Check your connection and try again.");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Couldn't place the order. Please try again.");
       setSubmitting(false);
     }
   };
