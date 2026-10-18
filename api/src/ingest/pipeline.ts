@@ -48,7 +48,7 @@ export async function runIngest(payload: Record<string, unknown>): Promise<void>
   const deep = payload.deep === true;
   if (deep && items.length < MIN_ITEMS) {
     const seen = new Set(items.map((i) => `${i.name.toLowerCase()}|${(i.size ?? "").toLowerCase()}`));
-    for (const it of await menuFromImages(name, site.pages, d.photos ?? [])) {
+    for (const it of await menuFromImages(name, site.pages, d.photos ?? [], payload.maps === true)) {
       const k = `${it.name.toLowerCase()}|${(it.size ?? "").toLowerCase()}`;
       if (!seen.has(k)) { seen.add(k); items.push(it); }
     }
@@ -147,8 +147,9 @@ export async function runIngest(payload: Record<string, unknown>): Promise<void>
   }
 
   // 6. Hook: only stored when the verifier approves it against the page text.
+  // SKIP_HOOKS=1 skips this step (hooks use the strong model); existing hooks are left as they are.
   let hook: string | null = null;
-  if (homeText.length >= 300 && homeUrl) {
+  if (process.env.SKIP_HOOKS !== "1" && homeText.length >= 300 && homeUrl) {
     const h = must("makeHook", await makeHook({ shopName: name, sourceText: homeText, sourceUrl: homeUrl }));
     if (h.verified && h.hook) hook = h.hook;
     await pool.query(
@@ -260,7 +261,7 @@ function teamPhotos(shopName: string): { file: string; mimeType: string; data: B
   return out;
 }
 
-async function menuFromImages(shopName: string, pages: Page[], photos: { name: string }[]): Promise<SourcedItem[]> {
+async function menuFromImages(shopName: string, pages: Page[], photos: { name: string }[], maps: boolean): Promise<SourcedItem[]> {
   const items: SourcedItem[] = [];
   const seen = new Set<string>();
   const add = (list: MenuItemDraft[], sourceUrl: string) => {
@@ -289,8 +290,8 @@ async function menuFromImages(shopName: string, pages: Page[], photos: { name: s
     if (r.items.length) console.log(`${shopName}: ${r.items.length} items from a site image`);
   }
 
-  // 3. Maps photos, only when MAPS_PHOTO_MENUS=1. Read in memory and discarded. Only the reference is kept.
-  if (items.length < MIN_ITEMS && process.env.MAPS_PHOTO_MENUS === "1") {
+  // 3. Maps photos, only for jobs queued with maps=true (see zones.ts). Read in memory and discarded. Only the reference is kept.
+  if (items.length < MIN_ITEMS && maps) {
     for (const p of photos.slice(0, 5)) {
       if (items.length >= MIN_ITEMS) break;
       const img = await fetchPlacePhoto(p.name);
