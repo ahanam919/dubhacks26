@@ -46,32 +46,27 @@ export default function ResultsScreen() {
 
       {!loading && !error && data && (
         <View style={styles.columns}>
-          <View style={styles.left}>
-            <ChainColumn chain={data.chain} conceptName={data.concept?.name ?? null} />
-          </View>
-
-          <View style={styles.right}>
-            <RankChips value={factor} onChange={setFactor} />
-            <FlatList
-              data={ranked}
-              keyExtractor={(r) => r.shop.id}
-              renderItem={({ item }) => (
-                <ShopCard
-                  result={item}
-                  onPress={() =>
-                    router.push({ pathname: '/shop/[id]', params: { id: item.shop.id } })
-                  }
-                />
-              )}
-              contentContainerStyle={{ gap: 10, paddingTop: 10, paddingBottom: insets.bottom + 16 }}
-              showsVerticalScrollIndicator={false}
-              ListEmptyComponent={
-                <Text style={styles.message}>
-                  No local shops found for "{query}". Try a different craving.
-                </Text>
-              }
-            />
-          </View>
+          <ChainColumn chain={data.chain} conceptName={data.concept?.name ?? null} />
+          <RankChips value={factor} onChange={setFactor} />
+          <FlatList
+            data={ranked}
+            keyExtractor={(r) => r.shop.id}
+            renderItem={({ item }) => (
+              <ShopCard
+                result={item}
+                onPress={() =>
+                  router.push({ pathname: '/shop/[id]', params: { id: item.shop.id } })
+                }
+              />
+            )}
+            contentContainerStyle={{ gap: 10, paddingBottom: insets.bottom + 16 }}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <Text style={styles.message}>
+                No local shops found for "{query}". Try a different craving.
+              </Text>
+            }
+          />
         </View>
       )}
     </View>
@@ -81,9 +76,7 @@ export default function ResultsScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg },
   top: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md },
-  columns: { flex: 1, flexDirection: 'row', gap: 10, paddingHorizontal: spacing.lg },
-  left: { width: '34%' },
-  right: { flex: 1 },
+  columns: { flex: 1, paddingHorizontal: spacing.lg, gap: spacing.md },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
   message: { ...font.body, color: colors.muted, textAlign: 'center' },
 });
