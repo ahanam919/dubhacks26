@@ -5,6 +5,7 @@ export const config = {
   models: {
     fast: "gemini-3.5-flash-lite",
     strong: "gemini-3.7-flash",
+    strongFallbacks: ["gemini-flash-latest"],
     fallbacks: ["gemini-flash-latest", "gemini-3.7-flash"],
     },
   timeoutMs: 30000,
