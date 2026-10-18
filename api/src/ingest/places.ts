@@ -32,6 +32,7 @@ export type PlaceHit = {
   displayName?: { text: string };
   location?: { latitude: number; longitude: number };
   businessStatus?: string;
+  primaryType?: string;
   types?: string[];
 };
 
@@ -41,7 +42,7 @@ export async function searchText(textQuery: string, rect: Rect, maxPages = 3): P
   for (let i = 0; i < maxPages; i++) {
     const r = await places<{ places?: PlaceHit[]; nextPageToken?: string }>(
       "/places:searchText",
-      "places.id,places.displayName,places.location,places.businessStatus,places.types,nextPageToken",
+      "places.id,places.displayName,places.location,places.businessStatus,places.primaryType,places.types,nextPageToken",
       { textQuery, locationRestriction: { rectangle: rect }, pageSize: 20, ...(pageToken ? { pageToken } : {}) },
     );
     out.push(...(r.places ?? []));
@@ -82,6 +83,7 @@ const LEVELS: Record<string, number> = {
   PRICE_LEVEL_EXPENSIVE: 3, PRICE_LEVEL_VERY_EXPENSIVE: 4,
 };
 export const priceLevelToInt = (p?: string): number | null => (p && p in LEVELS ? LEVELS[p] : null);
+
 // Downloads one Places photo into memory (never saved). The API key goes in a header and only to
 // places.googleapis.com; the final image URL Google returns has no key in it. Nothing here is logged.
 export async function fetchPlacePhoto(photoName: string, maxWidthPx = 1600): Promise<{ mimeType: string; data: Buffer } | null> {
