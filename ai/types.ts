@@ -18,11 +18,15 @@ export interface MatchConceptResult {
 }
 
 export interface WriteHookInput { shopName: string; sourceText: string; sourceUrl: string }
-export interface WriteHookResult { hook: string | null; sourceUrl: string }
+export interface WriteHookResult { hook: string | null; sourceUrl: string; error?: string }
 export interface VerifyHookInput { hook: string; sourceText: string }
-export interface VerifyHookResult { supported: boolean; unsupportedClaims: string[] }
+export interface VerifyHookResult {
+  supported: boolean; unsupportedClaims: string[];
+  evidence?: string[]; blockedBy?: string; error?: string;
+}
 export interface MakeHookResult {
   hook: string | null; sourceUrl: string; verified: boolean; unsupportedClaims: string[];
+  rejectedHook?: string; error?: string;
 }
 
 export interface ParseQueryResult {
