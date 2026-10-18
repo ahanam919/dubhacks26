@@ -8,9 +8,9 @@
 // - If the API can't be reached, it falls back to built-in demo data and an
 //   on-phone distance check, so the demo still works.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { directionsUrl, openUrl } from '../lib/actions';
 import {
   type CheckResult,
@@ -33,6 +33,11 @@ type Props = {
   deviceId?: string;
 };
 
+// Geofence zones: quiet by default so they don't compete with the pins, a little
+// stronger (in the app's accent blue) for the zone the pin is standing in.
+const ZONE_IDLE = { fill: 'rgba(34, 37, 43, 0.05)', stroke: 'rgba(34, 37, 43, 0.18)' };
+const ZONE_ACTIVE = { fill: 'rgba(47, 75, 219, 0.14)', stroke: 'rgba(47, 75, 219, 0.55)' };
+
 const NO_MATCH_TEXT: Record<NoMatchReason, string> = {
   bad_request: 'That spot could not be checked.',
   inaccurate: 'Location too imprecise to check.',
@@ -47,6 +52,12 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
   const [usingDemoData, setUsingDemoData] = useState(true);
   const [pin, setPin] = useState<LatLng>(DEMO_CENTER);
   const [status, setStatus] = useState('Drag the blue pin next to a chain.');
+
+  // The chain zone the pin is inside, if any (same 100 m radius the server uses).
+  const activeChainId = useMemo(
+    () => data.chains.find((c) => metersBetween(pin, c) <= CHAIN_RADIUS_M)?.id ?? null,
+    [data.chains, pin],
+  );
 
   useEffect(() => {
     // A notification problem must never take down the map, so failures are only logged.
@@ -101,6 +112,21 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
         initialRegion={DEMO_REGION}
         showsUserLocation
       >
+        {data.chains.map((c) => {
+          const zone = c.id === activeChainId ? ZONE_ACTIVE : ZONE_IDLE;
+          return (
+            <Circle
+              key={`zone-${c.id}`}
+              center={{ latitude: c.lat, longitude: c.lng }}
+              radius={CHAIN_RADIUS_M}
+              fillColor={zone.fill}
+              strokeColor={zone.stroke}
+              strokeWidth={1}
+              zIndex={0}
+            />
+          );
+        })}
+
         {data.chains.map((c) => (
           <Marker key={c.id} coordinate={{ latitude: c.lat, longitude: c.lng }} title={c.chainName} pinColor="tomato" />
         ))}
