@@ -1,0 +1,131 @@
+[
+  {
+    "id": "pumpkin_spice_latte",
+    "name": "Pumpkin spice latte",
+    "aliases": [
+      "psl",
+      "pumpkin latte",
+      "pumpkin spice"
+    ]
+  },
+  {
+    "id": "latte",
+    "name": "Latte",
+    "aliases": [
+      "caffe latte",
+      "flavored latte"
+    ]
+  },
+  {
+    "id": "cappuccino",
+    "name": "Cappuccino",
+    "aliases": []
+  },
+  {
+    "id": "americano",
+    "name": "Americano",
+    "aliases": []
+  },
+  {
+    "id": "espresso",
+    "name": "Espresso",
+    "aliases": [
+      "shot"
+    ]
+  },
+  {
+    "id": "macchiato",
+    "name": "Macchiato",
+    "aliases": [
+      "caramel macchiato"
+    ]
+  },
+  {
+    "id": "cold_brew",
+    "name": "Cold brew",
+    "aliases": [
+      "cold coffee"
+    ]
+  },
+  {
+    "id": "mocha",
+    "name": "Mocha",
+    "aliases": [
+      "chocolate latte"
+    ]
+  },
+  {
+    "id": "white_mocha",
+    "name": "White mocha",
+    "aliases": []
+  },
+  {
+    "id": "chai_latte",
+    "name": "Chai latte",
+    "aliases": [
+      "chai",
+      "chai tea latte"
+    ]
+  },
+  {
+    "id": "matcha_latte",
+    "name": "Matcha latte",
+    "aliases": [
+      "matcha"
+    ]
+  },
+  {
+    "id": "hot_chocolate",
+    "name": "Hot chocolate",
+    "aliases": [
+      "cocoa"
+    ]
+  },
+  {
+    "id": "affogato",
+    "name": "Affogato",
+    "aliases": []
+  },
+  {
+    "id": "frappe",
+    "name": "Frappe",
+    "aliases": [
+      "frappuccino",
+      "blended coffee"
+    ]
+  },
+  {
+    "id": "horchata_latte",
+    "name": "Horchata latte",
+    "aliases": [
+      "horchata"
+    ]
+  },
+  {
+    "id": "taro_latte",
+    "name": "Taro latte",
+    "aliases": [
+      "taro"
+    ]
+  },
+  {
+    "id": "iced_tea",
+    "name": "Iced tea",
+    "aliases": []
+  },
+  {
+    "id": "hot_tea",
+    "name": "Hot tea",
+    "aliases": []
+  },
+  {
+    "id": "italian_soda",
+    "name": "Italian soda",
+    "aliases": []
+  },
+  {
+    "id": "ginger_beer",
+    "name": "Ginger beer",
+    "aliases": []
+  }
+]

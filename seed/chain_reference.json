@@ -1,0 +1,13 @@
+[
+  {
+    "id": "sbux-psl",
+    "chain": "Starbucks",
+    "item_name": "Pumpkin Spice Latte",
+    "concept_id": "pumpkin_spice_latte",
+    "size": "grande 16oz",
+    "price_cents": null,
+    "as_of": null,
+    "source": "Starbucks app, U Village",
+    "is_featured": true
+  }
+]
