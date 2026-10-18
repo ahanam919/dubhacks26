@@ -9,9 +9,10 @@ import { fileURLToPath } from "node:url";
 import { getDetails, priceLevelToInt, fetchPlacePhoto, type PlaceDetails } from "./places";
 import { fetchPage, fetchImage, findMenuImages, findMenuLinks, isOrderingHost, type Page } from "./web";
 import { closest } from "./similar";
+import { ENOUGH_ITEMS } from "./zones";
 
 const CONCEPT_MIN = 0.6; // below this a match is treated as "no concept"
-const MIN_ITEMS = 5;     // stop fetching more pages once we have this many items
+const MIN_ITEMS = ENOUGH_ITEMS; // stop fetching more pages once we have this many items (set in zones.ts)
 
 type SourcedItem = MenuItemDraft & { sourceUrl: string };
 // source_url for items read from a photo: team_photo:<file>, site_image:<url>, maps_photo:<photo reference>.
@@ -43,7 +44,9 @@ export async function runIngest(payload: Record<string, unknown>): Promise<void>
   const { milkOptions, homeText, homeUrl } = site;
   const items = site.items;
   // Tier 2: menu photos (team photos, then images on the shop's own pages, then Maps photos if switched on).
-  if (items.length < MIN_ITEMS) {
+  // Only for "deep" shops (see zones.ts), because every photo read is a Gemini call.
+  const deep = payload.deep === true;
+  if (deep && items.length < MIN_ITEMS) {
     const seen = new Set(items.map((i) => `${i.name.toLowerCase()}|${(i.size ?? "").toLowerCase()}`));
     for (const it of await menuFromImages(name, site.pages, d.photos ?? [])) {
       const k = `${it.name.toLowerCase()}|${(it.size ?? "").toLowerCase()}`;
@@ -235,6 +238,7 @@ async function menuFromWebsite(shopName: string, website?: string) {
   }
   return { items, milkOptions: [...milk], homeText, homeUrl, pages: pagesRead };
 }
+
 // ---- Tier 2: menu photos ----
 
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
