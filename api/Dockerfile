@@ -12,6 +12,7 @@ RUN cd api && npm ci
 # Code (explicit folders, so nothing else from the repo root gets in)
 COPY ai ./ai
 COPY api ./api
+COPY seed ./seed
 
 ENV NODE_ENV=production
 WORKDIR /app/api

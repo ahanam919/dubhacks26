@@ -4,14 +4,19 @@ import {
   extractMenu, matchConcepts, makeHook, comparePrice, writeGeofenceMessage,
   type MenuItemDraft,
 } from "../../../ai";
-import { getDetails, priceLevelToInt, type PlaceDetails } from "./places";
-import { fetchPage, findMenuLinks, isOrderingHost } from "./web";
+import { readdirSync, readFileSync, existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { getDetails, priceLevelToInt, fetchPlacePhoto, type PlaceDetails } from "./places";
+import { fetchPage, fetchImage, findMenuImages, findMenuLinks, isOrderingHost, type Page } from "./web";
 import { closest } from "./similar";
 
 const CONCEPT_MIN = 0.6; // below this a match is treated as "no concept"
 const MIN_ITEMS = 5;     // stop fetching more pages once we have this many items
 
 type SourcedItem = MenuItemDraft & { sourceUrl: string };
+// source_url for items read from a photo: team_photo:<file>, site_image:<url>, maps_photo:<photo reference>.
+// A Maps photo is kept only as its reference. The image itself is read in memory and thrown away.
+const PHOTO_SOURCE = /^(team_photo|site_image|maps_photo):/;
 
 function must<T extends { error?: string }>(what: string, r: T): T {
   // ai/ never throws. It sets .error when Gemini failed, which means "retry", not "no result".
@@ -34,8 +39,17 @@ export async function runIngest(payload: Record<string, unknown>): Promise<void>
   const shopId = await upsertShop(d, name);
 
   // 2. Menu. Tier 1: the shop's own website and its menu/ordering pages.
-  const { items, milkOptions, homeText, homeUrl } = await menuFromWebsite(name, d.websiteUri);
-  // Tier 2 (menu photos) needs ai/extractMenu to accept images. It does not yet, so it is skipped.
+  const site = await menuFromWebsite(name, d.websiteUri);
+  const { milkOptions, homeText, homeUrl } = site;
+  const items = site.items;
+  // Tier 2: menu photos (team photos, then images on the shop's own pages, then Maps photos if switched on).
+  if (items.length < MIN_ITEMS) {
+    const seen = new Set(items.map((i) => `${i.name.toLowerCase()}|${(i.size ?? "").toLowerCase()}`));
+    for (const it of await menuFromImages(name, site.pages, d.photos ?? [])) {
+      const k = `${it.name.toLowerCase()}|${(it.size ?? "").toLowerCase()}`;
+      if (!seen.has(k)) { seen.add(k); items.push(it); }
+    }
+  }
   // Tier 3: Places has no structured menu items, and we do not invent any.
   if (items.length === 0) console.log(`no menu found for ${name}; stored the shop without items`);
 
@@ -52,7 +66,9 @@ export async function runIngest(payload: Record<string, unknown>): Promise<void>
     const m = matched[i];
     const conceptId = m.conceptId && m.confidence >= CONCEPT_MIN ? m.conceptId : null;
     const price = it.priceCents != null && it.priceCents > 0 ? it.priceCents : null; // null = "Price not listed"
-    const priceSource = price == null ? null : isOrderingHost(it.sourceUrl) ? "ordering_page" : "menu_page";
+    const priceSource = price == null ? null
+      : PHOTO_SOURCE.test(it.sourceUrl) ? "menu_photo"
+      : isOrderingHost(it.sourceUrl) ? "ordering_page" : "menu_page";
     const { rows: r } = await pool.query(
       `INSERT INTO menu_item (shop_id, name, description, price_cents, price_source, size, concept_id,
                               concept_confidence, attributes, status, source_url, last_checked_at)
@@ -190,20 +206,23 @@ async function menuFromWebsite(shopName: string, website?: string) {
   const items: SourcedItem[] = [];
   const milk = new Set<string>();
   const seen = new Set<string>();
+  const pagesRead: Page[] = [];
   let homeText = "";
   let homeUrl = "";
-  if (!website) return { items, milkOptions: [] as string[], homeText, homeUrl };
+  if (!website) return { items, milkOptions: [] as string[], homeText, homeUrl, pages: pagesRead };
 
   const home = await fetchPage(website);
-  if (!home) return { items, milkOptions: [] as string[], homeText, homeUrl };
+  if (!home) return { items, milkOptions: [] as string[], homeText, homeUrl, pages: pagesRead };
   homeText = home.text;
   homeUrl = home.url;
+  pagesRead.push(home);
 
   // Menu-looking pages first, then the homepage itself.
   const pages = [...findMenuLinks(home.html, home.url), home.url];
   for (const url of pages) {
     if (items.length >= MIN_ITEMS) break;
-    const page = url === home.url ? home : await fetchPage(url);
+    const page: Page | null = url === home.url ? home : await fetchPage(url);
+    if (page && page !== home) pagesRead.push(page);
     if (!page || page.text.length < 80) continue;
     const r = must(`extractMenu(${page.url})`, await extractMenu({ shopName, text: page.text }));
     for (const it of r.items) {
@@ -214,5 +233,68 @@ async function menuFromWebsite(shopName: string, website?: string) {
     }
     r.milkOptions?.forEach((m) => milk.add(m));
   }
-  return { items, milkOptions: [...milk], homeText, homeUrl };
+  return { items, milkOptions: [...milk], homeText, homeUrl, pages: pagesRead };
+}
+// ---- Tier 2: menu photos ----
+
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const TEAM_DIR = fileURLToPath(new URL("../../../seed/menu_photos/", import.meta.url));
+const MIME: Record<string, string> = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp" };
+
+// Photos the team took, in seed/menu_photos/<shop-slug>-menu.jpg (or -menu-2.jpg, ...).
+// A file matches when its slug is the start of the shop's slug, so "leon-coffee-house" matches "Leon Coffee House - U District".
+function teamPhotos(shopName: string): { file: string; mimeType: string; data: Buffer }[] {
+  if (!existsSync(TEAM_DIR)) return [];
+  const shop = slugify(shopName);
+  const out: { file: string; mimeType: string; data: Buffer }[] = [];
+  for (const f of readdirSync(TEAM_DIR).sort()) {
+    const m = /^(.*)-menu(?:-\d+)?\.(jpe?g|png|webp)$/i.exec(f);
+    if (!m || !shop.startsWith(m[1].toLowerCase())) continue;
+    const data = readFileSync(TEAM_DIR + f);
+    if (data.byteLength > 0 && data.byteLength <= 4 * 1024 * 1024) out.push({ file: f, mimeType: MIME[m[2].toLowerCase()], data });
+  }
+  return out;
+}
+
+async function menuFromImages(shopName: string, pages: Page[], photos: { name: string }[]): Promise<SourcedItem[]> {
+  const items: SourcedItem[] = [];
+  const seen = new Set<string>();
+  const add = (list: MenuItemDraft[], sourceUrl: string) => {
+    for (const it of list) {
+      const k = `${it.name.toLowerCase()}|${(it.size ?? "").toLowerCase()}`;
+      if (!seen.has(k)) { seen.add(k); items.push({ ...it, sourceUrl }); }
+    }
+  };
+
+  // 1. Team photos: one call with all of them (the limit is 6 per call).
+  const team = teamPhotos(shopName).slice(0, 6);
+  if (team.length) {
+    const r = must(`extractMenu(team photos)`, await extractMenu({ shopName, images: team.map(({ mimeType, data }) => ({ mimeType, data })) }));
+    add(r.items, `team_photo:${team.map((t) => t.file).join(",")}`);
+    console.log(`${shopName}: ${r.items.length} items from ${team.length} team photo(s)`);
+  }
+
+  // 2. Images on the shop's own pages. One call per image, so each item knows which image it came from.
+  const urls = [...new Set(pages.flatMap((p) => findMenuImages(p.html, p.url)))].slice(0, 4);
+  for (const url of urls) {
+    if (items.length >= MIN_ITEMS) break;
+    const img = await fetchImage(url);
+    if (!img) continue;
+    const r = must(`extractMenu(site image)`, await extractMenu({ shopName, images: [img] }));
+    add(r.items, `site_image:${url}`);
+    if (r.items.length) console.log(`${shopName}: ${r.items.length} items from a site image`);
+  }
+
+  // 3. Maps photos, only when MAPS_PHOTO_MENUS=1. Read in memory and discarded. Only the reference is kept.
+  if (items.length < MIN_ITEMS && process.env.MAPS_PHOTO_MENUS === "1") {
+    for (const p of photos.slice(0, 5)) {
+      if (items.length >= MIN_ITEMS) break;
+      const img = await fetchPlacePhoto(p.name);
+      if (!img) continue;
+      const r = must(`extractMenu(maps photo)`, await extractMenu({ shopName, images: [img] }));
+      add(r.items, `maps_photo:${p.name}`);
+      if (r.items.length) console.log(`${shopName}: ${r.items.length} items from a Maps photo`);
+    }
+  }
+  return items;
 }
