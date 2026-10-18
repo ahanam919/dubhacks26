@@ -3,7 +3,9 @@ export type AspectKey = "taste" | "ambience" | "study_friendly" | "service_speed
 
 export interface ConceptDef { id: string; name: string; aliases?: string[] }
 
-export interface ExtractMenuInput { shopName: string; text?: string; imageUrls?: string[] }
+export interface MenuImage { mimeType: string; data: Uint8Array | string }   // data: raw bytes, or a base64 string
+// Provide text, images, or both. imageUrls is unused (the worker downloads images and passes bytes).
+export interface ExtractMenuInput { shopName: string; text?: string; images?: MenuImage[]; imageUrls?: string[] }
 export interface MenuItemDraft {
   name: string; description?: string; priceCents: number | null; priceSource?: PriceSource;
   size?: string; category?: string; confidence?: "high" | "medium" | "low";
@@ -50,7 +52,8 @@ export interface GeofenceResult { message: string }   // contains the literal {m
 export interface ComparePriceInput {
   chain: string;
   local: { name: string; priceCents: number | null; size?: string };
-  chainRef: { id: string; priceCents: number | null; size?: string; asOf: string };
+  // approximate: true when the chain price is an estimate, not a verified price
+  chainRef: { id: string; priceCents: number | null; size?: string; asOf: string; approximate?: boolean };
 }
 // null result = not comparable (a price is missing or the sizes don't match)
 export interface ComparePriceResult {
@@ -59,6 +62,7 @@ export interface ComparePriceResult {
   priceDiffCents: number;
   verdict: "cheaper" | "similar" | "pricier";
   sentence: string;
+  approximate?: boolean;
 }
 
 export interface PhotoCandidate { id: string; url: string; source: "website" | "places"; authorName?: string }

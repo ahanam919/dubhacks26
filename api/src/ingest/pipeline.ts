@@ -104,6 +104,7 @@ export async function runIngest(payload: Record<string, unknown>): Promise<void>
           id: String(ref.id), // ai/ wants a string id
           priceCents: ref.approx_price_cents,
           size: ref.size,
+          approximate: true,
           asOf: new Date(ref.as_of_date).toISOString().slice(0, 10),
         },
       });

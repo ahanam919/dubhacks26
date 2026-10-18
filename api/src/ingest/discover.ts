@@ -13,8 +13,7 @@ const QUERIES = ["coffee shop", "cafe", "espresso bar", "bubble tea", "tea house
 const OK_TYPES = new Set(["cafe", "coffee_shop", "tea_house", "coffee_roastery", "bubble_tea_store"]);
 
 // Chains are the thing we compare AGAINST, so they never become "local" shops.
-const CHAIN_RE = /starbucks|dunkin|peet'?s|tully'?s|seattle'?s best|caribou|dutch bros|coffee bean|tim hortons|blue bottle|7-eleven|mcdonald|subway|panera|jamba|kung fu tea|gong cha|sharetea|tiger sugar/i;
-
+const CHAIN_RE = /starbucks|dunkin|peet'?s|tully'?s|seattle'?s best|caribou|dutch bros|coffee bean|tim hortons|blue bottle|7-eleven|mcdonald|subway|panera|jamba|kung fu tea|gong cha|sharetea|tiger sugar|happy ?lemon/i;
 export async function runDiscover(payload: Record<string, unknown>): Promise<void> {
   const area = String(payload.area ?? "");
   const rect = (payload.rect as Rect | undefined) ?? AREAS[area];
