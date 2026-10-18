@@ -6,6 +6,8 @@
 //   that spot is near a chain, the same check a real geofence uses, and shows the
 //   suggestion in a card that slides up from the bottom. (Real background geofencing
 //   would use lib/notifications.ts instead, since the app isn't open then.)
+// - When the app opens (and whenever you're not near a chain), the card shows the
+//   closest local coffee shop to you instead.
 // - If the API can't be reached, it falls back to built-in demo data and an
 //   on-phone distance check, so the demo still works.
 
@@ -43,7 +45,7 @@ const ZONE_ACTIVE = { fill: 'rgba(47, 75, 219, 0.14)', stroke: 'rgba(47, 75, 219
 const NO_MATCH_TEXT: Record<NoMatchReason, string> = {
   bad_request: 'That spot could not be checked.',
   inaccurate: 'Location too imprecise to check.',
-  no_chain: 'Not near a chain. Tap the map near a grey chain pin.',
+  no_chain: 'Not near a chain, and no local coffee close by.',
   no_shop: 'Near a chain, but no local shop within walking distance.',
   cooldown: 'Already suggested a shop here recently.',
   quiet_hours: 'Quiet hours: no suggestions right now.',
@@ -54,7 +56,9 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
   const [usingDemoData, setUsingDemoData] = useState(true);
   const [pin, setPin] = useState<LatLng>(DEMO_CENTER);
   const insets = useSafeAreaInsets();
-  const [status, setStatus] = useState('Tap the map near a chain to move your pin.');
+  const [status, setStatus] = useState('Loading the map…');
+  // True once the map data has loaded (or failed and fell back to demo data).
+  const [dataReady, setDataReady] = useState(!apiBaseUrl);
   const [suggestedShopId, setSuggestedShopId] = useState<string | null>(null);
   const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
   // Walking path drawn on this map (straight line from you to the suggested shop).
@@ -65,11 +69,8 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
   const [swapCount, setSwapCount] = useState(0);
   const [countedThisSuggestion, setCountedThisSuggestion] = useState(false);
 
-  // The chain zone the pin is inside, if any (same 100 m radius the server uses).
-  const activeChainId = useMemo(
-    () => data.chains.find((c) => metersBetween(pin, c) <= CHAIN_RADIUS_M)?.id ?? null,
-    [data.chains, pin],
-  );
+  // The chain zone the pin is inside, if any (same radius the server uses).
+  const activeChainId = useMemo(() => nearestChainWithin(pin, data)?.id ?? null, [data, pin]);
 
   useEffect(() => {
     if (!apiBaseUrl) return;
@@ -80,9 +81,33 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
       })
       .catch((err) => {
         console.warn('Map data failed, using demo data', err);
-        setStatus('Server not reachable, showing demo data.');
-      });
+      })
+      .finally(() => setDataReady(true));
   }, [apiBaseUrl]);
+
+  // As soon as the map has its data, suggest the closest local coffee to where you are.
+  const shownOnOpen = useRef(false);
+  useEffect(() => {
+    if (!dataReady || shownOnOpen.current) return;
+    shownOnOpen.current = true;
+    if (!showClosestCoffee(pin)) setStatus('Tap the map near a chain to move your pin.');
+    // Only on open: later updates come from moving the pin.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataReady]);
+
+  // Not near a chain: show the closest local coffee shop instead. Returns false if
+  // there's none within reach (e.g. you tapped far outside the demo area).
+  function showClosestCoffee(spot: LatLng): boolean {
+    const closest = closestCoffee(spot, data);
+    if (!closest) {
+      setSuggestedShopId(null);
+      return false;
+    }
+    setSuggestedShopId(closest.shop.id);
+    setStatus(`Closest local coffee: ${closest.shop.name}`);
+    setSuggestion(closest);
+    return true;
+  }
 
   async function onPinDropped(spot: LatLng) {
     setPin(spot);
@@ -97,8 +122,11 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
           : demoCheck(spot, data);
 
       if (!result.match) {
+        const reason = result.reason ?? 'no_chain';
+        // Not near a chain: still point you to the closest local coffee.
+        if (reason === 'no_chain' && showClosestCoffee(spot)) return;
         setSuggestedShopId(null);
-        setStatus(NO_MATCH_TEXT[result.reason ?? 'no_chain']);
+        setStatus(NO_MATCH_TEXT[reason]);
         return;
       }
       setSuggestedShopId(result.shop.id);
@@ -127,6 +155,19 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
       ],
       { edgePadding: { top: 140, right: 80, bottom: 420, left: 80 }, animated: true },
     );
+  }
+
+  // Zoom in or out one step. Google Maps (Android) zooms by level; Apple Maps (iPhone)
+  // works by camera height instead, so halve or double that.
+  async function zoomBy(step: 1 | -1) {
+    const map = mapRef.current;
+    if (!map) return;
+    const camera = await map.getCamera();
+    if (camera.zoom != null) {
+      map.animateCamera({ zoom: Math.min(20, Math.max(3, camera.zoom + step)) }, { duration: 250 });
+    } else if (camera.altitude != null) {
+      map.animateCamera({ altitude: camera.altitude * (step > 0 ? 0.5 : 2) }, { duration: 250 });
+    }
   }
 
   function recenter() {
@@ -241,16 +282,39 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
         <LegendItem color={colors.chainMuted} label="Chain" />
       </View>
 
-      {/* Back to the whole area */}
+      {/* Map controls: zoom in/out, and back to the whole area */}
       {!suggestion && (
-        <Pressable
-          style={styles.recenter}
-          onPress={recenter}
-          accessibilityRole="button"
-          accessibilityLabel="Show the whole area"
-        >
-          <Text style={styles.recenterText}>Recenter</Text>
-        </Pressable>
+        <View style={styles.controls}>
+          <View style={styles.zoomGroup}>
+            <Pressable
+              style={styles.zoomButton}
+              onPress={() => void zoomBy(1)}
+              accessibilityRole="button"
+              accessibilityLabel="Zoom in"
+              hitSlop={4}
+            >
+              <Text style={styles.zoomText}>+</Text>
+            </Pressable>
+            <View style={styles.zoomDivider} />
+            <Pressable
+              style={styles.zoomButton}
+              onPress={() => void zoomBy(-1)}
+              accessibilityRole="button"
+              accessibilityLabel="Zoom out"
+              hitSlop={4}
+            >
+              <Text style={styles.zoomText}>−</Text>
+            </Pressable>
+          </View>
+          <Pressable
+            style={styles.recenter}
+            onPress={recenter}
+            accessibilityRole="button"
+            accessibilityLabel="Show the whole area"
+          >
+            <Text style={styles.recenterText}>Recenter</Text>
+          </Pressable>
+        </View>
       )}
 
       {suggestion ? (
@@ -339,8 +403,44 @@ function Teardrop({
 // --- Demo-mode check (only used when the API can't be reached) -------------------
 // A tiny copy of the server logic so the screen still works offline.
 
-const CHAIN_RADIUS_M = 100;
+// Keep CHAIN_RADIUS_M in sync with api/src/geofence/distance.ts.
+const CHAIN_RADIUS_M = 200;
 const WALK_RADIUS_M = 800;
+const WALK_M_PER_MIN = 80;
+// The "closest local coffee" card is skipped if the nearest shop is farther than this.
+const CLOSEST_MAX_M = 2000;
+// Shops on the map that aren't coffee, so "closest coffee" never picks them.
+// TODO: replace with a category field on shops once the database has one.
+const NOT_COFFEE_IDS = new Set(['rachels-ginger-beer']);
+
+function walkMinutes(meters: number): number {
+  return Math.max(1, Math.ceil(meters / WALK_M_PER_MIN));
+}
+
+/** The nearest chain within CHAIN_RADIUS_M (zones can overlap, so nearest wins). */
+function nearestChainWithin(spot: LatLng, data: MapData) {
+  let best: { c: MapData['chains'][number]; d: number } | null = null;
+  for (const c of data.chains) {
+    const d = metersBetween(spot, c);
+    if (d <= CHAIN_RADIUS_M && (!best || d < best.d)) best = { c, d };
+  }
+  return best?.c ?? null;
+}
+
+/** The closest local coffee shop to `spot`, as a card suggestion, or null if none is in reach. */
+function closestCoffee(spot: LatLng, data: MapData): Suggestion | null {
+  const nearest = data.shops
+    .filter((s) => !NOT_COFFEE_IDS.has(s.id))
+    .map((s) => ({ s, d: metersBetween(spot, s) }))
+    .sort((a, b) => a.d - b.d)[0];
+  if (!nearest || nearest.d > CLOSEST_MAX_M) return null;
+  const minutes = walkMinutes(nearest.d);
+  return {
+    chainName: null,
+    shop: { id: nearest.s.id, name: nearest.s.name, lat: nearest.s.lat, lng: nearest.s.lng, walkMinutes: minutes },
+    message: `${nearest.s.name} is the closest local coffee, ${minutes} min on foot. Skip the chain line.`,
+  };
+}
 
 function metersBetween(a: LatLng, b: LatLng): number {
   const R = 6371000;
@@ -352,7 +452,7 @@ function metersBetween(a: LatLng, b: LatLng): number {
 }
 
 function demoCheck(spot: LatLng, data: MapData): CheckResult {
-  const chain = data.chains.find((c) => metersBetween(spot, c) <= CHAIN_RADIUS_M);
+  const chain = nearestChainWithin(spot, data);
   if (!chain) return { match: false, reason: 'no_chain' };
 
   const nearest = data.shops
@@ -361,12 +461,12 @@ function demoCheck(spot: LatLng, data: MapData): CheckResult {
     .sort((a, b) => a.d - b.d)[0];
   if (!nearest) return { match: false, reason: 'no_shop' };
 
-  const walkMinutes = Math.max(1, Math.ceil(nearest.d / 80));
+  const minutes = walkMinutes(nearest.d);
   return {
     match: true,
     chain: { id: chain.id, name: chain.chainName },
-    shop: { id: nearest.s.id, name: nearest.s.name, walkMinutes, lat: nearest.s.lat, lng: nearest.s.lng },
-    message: `${nearest.s.name} is ${walkMinutes} min away. Tap for directions.`,
+    shop: { id: nearest.s.id, name: nearest.s.name, walkMinutes: minutes, lat: nearest.s.lat, lng: nearest.s.lng },
+    message: `${nearest.s.name} is ${minutes} min away. Tap for directions.`,
   };
 }
 
@@ -387,10 +487,26 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   legendDot: { width: 10, height: 10, borderRadius: 5, borderWidth: 1.5, borderColor: '#FFFFFF' },
   legendText: { fontSize: 12, fontWeight: '600', color: colors.ink },
-  recenter: {
+  controls: {
     position: 'absolute',
     right: spacing.lg,
     bottom: 120,
+    alignItems: 'flex-end',
+    gap: spacing.sm,
+  },
+  zoomGroup: {
+    width: 44,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.line,
+    overflow: 'hidden',
+    elevation: 3,
+  },
+  zoomButton: { height: 44, alignItems: 'center', justifyContent: 'center' },
+  zoomDivider: { height: 1, backgroundColor: colors.line },
+  zoomText: { fontSize: 22, fontWeight: '500', color: colors.ink, lineHeight: 26 },
+  recenter: {
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: radius.pill,

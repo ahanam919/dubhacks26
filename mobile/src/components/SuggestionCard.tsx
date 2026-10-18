@@ -1,5 +1,6 @@
-// Card that slides up from the bottom of the map when you walk into a chain's zone:
-// which local shop to try instead and how far it is. "Show route" draws the way there
+// Card that slides up from the bottom of the map: which local shop to try and how far
+// it is. Shown when you walk into a chain's zone ("Near Starbucks? Try local"), and also
+// when the app opens or you're not near any chain ("Closest local coffee"). "Show route" draws the way there
 // on the app's own map (so you stay in the app); a second tap opens Google Maps for
 // step-by-step directions.
 
@@ -12,7 +13,8 @@ import { formatPrice } from '../lib/format';
 import { colors, font, radius, spacing } from '../lib/theme';
 
 export type Suggestion = {
-  chainName: string;
+  /** The chain you're near, or null when this is just the closest local shop. */
+  chainName: string | null;
   shop: { id: string; name: string; lat: number; lng: number; walkMinutes: number; priceCents?: number | null };
   message: string;
 };
@@ -54,7 +56,7 @@ export default function SuggestionCard({ suggestion, routeShown, swapNumber = nu
       accessibilityLiveRegion="polite"
     >
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>Near {chainName}? Try local</Text>
+        <Text style={styles.eyebrow}>{chainName ? `Near ${chainName}? Try local` : 'Closest local coffee'}</Text>
         <Pressable onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Dismiss suggestion">
           <Text style={styles.close}>✕</Text>
         </Pressable>
