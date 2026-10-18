@@ -9,6 +9,7 @@ import {
   Shop,
   ShopPhoto,
 } from '../types';
+import { API_URL } from '../lib/config';
 
 // ---------- ids (valid uuid format, readable on purpose) ----------
 const SHOP_ID = {
@@ -296,25 +297,67 @@ const RESULTS: SearchResult[] = SHOPS.map((shop, i) => {
 });
 
 // ---------- the functions your screens call ----------
-// Later, only the bodies change (to fetch from your backend).
+// These now load real data from the API (the server's /app routes, which read the
+// database). The sample data above is no longer used by these screens; it stays
+// for reference and for getGeofenceMessage below.
+
+let lastSearch: SearchResponse | null = null;
+
+async function getJson<T>(path: string): Promise<T> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
+  try {
+    const res = await fetch(`${API_URL}${path}`, { signal: controller.signal });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(body.message ?? `Request failed (${res.status})`) as Error & { status?: number };
+      err.status = res.status;
+      throw err;
+    }
+    return body as T;
+  } catch (e) {
+    if (e instanceof Error && e.name === 'AbortError') throw new Error('The server took too long. Try again.');
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function search(query: string): Promise<SearchResponse> {
-  return { query, concept: CONCEPT, chain: CHAIN, results: RESULTS };
+  const res = await getJson<SearchResponse>(`/app/search?q=${encodeURIComponent(query)}`);
+  lastSearch = res;
+  return res;
 }
 
+// The shop page, compare and order screens all call this. Reuse the exact result
+// from the last search when we have it, so every screen shows the same item and
+// price; otherwise ask the server. undefined means "not found" (the screens show
+// a friendly message for that).
 export async function getResultById(id: string): Promise<SearchResult | undefined> {
-  return RESULTS.find((r) => r.shop.id === id);
+  const hit = lastSearch?.results.find((r) => r.shop.id === id);
+  if (hit) return hit;
+  const q = lastSearch?.query ? `?q=${encodeURIComponent(lastSearch.query)}` : '';
+  try {
+    return await getJson<SearchResult>(`/app/shops/${encodeURIComponent(id)}${q}`);
+  } catch (e) {
+    if ((e as { status?: number }).status === 404) return undefined;
+    throw e;
+  }
 }
 
-// Used by the home screen to place pins, and by compare/confirm for the chain baseline.
+// Used by the browse map to place pins.
 export async function getMapShops(): Promise<Shop[]> {
-  return SHOPS;
+  return getJson<Shop[]>('/app/shops');
 }
 
+// The chain item that results are compared against: the one from the last search,
+// so the compare screen matches the results list.
 export async function getFeaturedChain(): Promise<ChainReference> {
-  return CHAIN;
+  return lastSearch?.chain ?? getJson<ChainReference>('/app/featured-chain');
 }
 
 // Used by the simulated-location screen to preview the geofence push.
+// (Still sample data: the real suggestion comes from the map's geofence check.)
 export async function getGeofenceMessage(): Promise<GeofenceMessage> {
   return GEOFENCE_MESSAGES[0];
 }
