@@ -4,7 +4,8 @@
 //   walking directions.
 // - Drag the blue "Pretend I'm here" pin and let go: the app asks the server whether
 //   that spot is near a chain, the same check a real geofence uses, and shows the
-//   suggestion as a notification (or an in-app pop-up where notifications aren't available).
+//   suggestion in a card that slides up from the bottom. (Real background geofencing
+//   would use lib/notifications.ts instead, since the app isn't open then.)
 // - If the API can't be reached, it falls back to built-in demo data and an
 //   on-phone distance check, so the demo still works.
 
@@ -23,8 +24,8 @@ import {
   checkLocation,
   fetchMapData,
 } from '../lib/geofenceApi';
-import { setupNotifications, showSuggestion } from '../lib/notifications';
 import { colors, font, radius, spacing } from '../lib/theme';
+import SuggestionCard, { type Suggestion } from './SuggestionCard';
 
 type Props = {
   /** Base URL of the API. Leave out to use demo data only. */
@@ -53,6 +54,7 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
   const [pin, setPin] = useState<LatLng>(DEMO_CENTER);
   const [status, setStatus] = useState('Drag the blue pin next to a chain.');
   const [suggestedShopId, setSuggestedShopId] = useState<string | null>(null);
+  const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
 
   // The chain zone the pin is inside, if any (same 100 m radius the server uses).
   const activeChainId = useMemo(
@@ -61,9 +63,6 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
   );
 
   useEffect(() => {
-    // A notification problem must never take down the map, so failures are only logged.
-    setupNotifications().catch((err) => console.warn('Notification setup failed', err));
-
     if (!apiBaseUrl) return;
     fetchMapData(apiBaseUrl)
       .then((d) => {
@@ -78,6 +77,7 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
 
   async function onPinDropped(spot: LatLng) {
     setPin(spot);
+    setSuggestion(null);
     setStatus('Checking…');
     try {
       const result =
@@ -92,13 +92,7 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
       }
       setSuggestedShopId(result.shop.id);
       setStatus(`Near ${result.chain.name}: suggesting ${result.shop.name}`);
-      await showSuggestion({
-        title: `Near ${result.chain.name}?`,
-        message: result.message,
-        shopId: result.shop.id,
-        lat: result.shop.lat,
-        lng: result.shop.lng,
-      });
+      setSuggestion({ chainName: result.chain.name, shop: result.shop, message: result.message });
     } catch (err) {
       console.warn('Geofence check failed', err);
       setStatus('Check failed. Is the server running?');
@@ -180,10 +174,14 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
         </Marker>
       </MapView>
 
-      <View style={styles.statusBox}>
-        {usingDemoData && <Text style={styles.demoTag}>DEMO DATA</Text>}
-        <Text style={styles.statusText}>{status}</Text>
-      </View>
+      {suggestion ? (
+        <SuggestionCard suggestion={suggestion} onClose={() => setSuggestion(null)} />
+      ) : (
+        <View style={styles.statusBox}>
+          {usingDemoData && <Text style={styles.demoTag}>DEMO DATA</Text>}
+          <Text style={styles.statusText}>{status}</Text>
+        </View>
+      )}
     </View>
   );
 }
