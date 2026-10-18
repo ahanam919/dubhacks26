@@ -21,4 +21,5 @@ __pycache__/
 *.log
 
 tiger-cloud-*-credentials*
-.vscode/
+.vscode/.idea/
+.idea/

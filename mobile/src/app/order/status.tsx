@@ -5,44 +5,93 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '../../components/Button';
 import { getResultById } from '../../data/mock';
 import { directionsUrl, openUrl } from '../../lib/actions';
+import { getOrder, OrderStatus } from '../../lib/api';
 import { colors, font, radius, spacing } from '../../lib/theme';
 import { useAsync } from '../../lib/useAsync';
 
 const STEPS = ['Placed', 'Accepted', 'Ready for pickup'];
 
+function stepIndex(status: OrderStatus): number {
+  if (status === 'ready') return 2;
+  if (status === 'accepted') return 1;
+  return 0;
+}
+
 export default function StatusScreen() {
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: string; orderId?: string }>();
+  const { id, orderId } = useLocalSearchParams<{ id: string; orderId?: string }>();
   const { data: result } = useAsync(() => getResultById(id), [id]);
-  const [step, setStep] = useState(0);
 
-  // SIMULATED status. Replace with polling GET /order/:id every few seconds.
+  const [status, setStatus] = useState<OrderStatus>('placed');
+  const [simulated, setSimulated] = useState(false);
+  const [pollError, setPollError] = useState(false);
+
+  // Poll the backend every 3 seconds until the order is ready or cancelled.
   useEffect(() => {
-    const t1 = setTimeout(() => setStep(1), 4000);
-    const t2 = setTimeout(() => setStep(2), 9000);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
+    if (!orderId) return;
+    let stopped = false;
+
+    const tick = async () => {
+      try {
+        const res = await getOrder(orderId);
+        if (stopped) return;
+        setStatus(res.status);
+        setSimulated(Boolean(res.simulated));
+        setPollError(false);
+        if (res.status === 'ready' || res.status === 'cancelled') {
+          stopped = true;
+          clearInterval(timer);
+        }
+      } catch {
+        if (!stopped) setPollError(true); // keep trying; the connection may come back
+      }
     };
-  }, []);
+
+    const timer = setInterval(tick, 3000);
+    tick();
+
+    return () => {
+      stopped = true;
+      clearInterval(timer);
+    };
+  }, [orderId]);
+
+  const current = stepIndex(status);
 
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>{result ? result.shop.name : 'Your order'}</Text>
-        <Text style={styles.muted}>Sandbox order with simulated status updates.</Text>
+        <Text style={styles.muted}>
+          {simulated
+            ? 'Sandbox order. Status updates are simulated.'
+            : 'Sandbox order. Status comes from the shop’s Square account.'}
+        </Text>
 
-        <View style={styles.panel}>
-          {STEPS.map((label, i) => {
-            const done = i <= step;
-            return (
-              <View key={label} style={styles.stepRow}>
-                <View style={[styles.dot, done && styles.dotDone]} />
-                <Text style={[styles.stepText, done && styles.stepTextDone]}>{label}</Text>
-              </View>
-            );
-          })}
-        </View>
+        {!orderId && <Text style={styles.error}>No order to show. Go back and try again.</Text>}
+
+        {status === 'cancelled' ? (
+          <View style={styles.panel}>
+            <Text style={styles.heading}>This order was canceled</Text>
+            <Text style={styles.muted}>Nothing was charged. You can go back and try another shop.</Text>
+          </View>
+        ) : (
+          <View style={styles.panel}>
+            {STEPS.map((label, i) => {
+              const done = i <= current;
+              return (
+                <View key={label} style={styles.stepRow}>
+                  <View style={[styles.dot, done && styles.dotDone]} />
+                  <Text style={[styles.stepText, done && styles.stepTextDone]}>{label}</Text>
+                </View>
+              );
+            })}
+          </View>
+        )}
+
+        {pollError && (
+          <Text style={styles.muted}>Having trouble refreshing the status. Still trying.</Text>
+        )}
       </ScrollView>
 
       <View style={[styles.bar, { paddingBottom: insets.bottom + 12 }]}>
@@ -59,7 +108,9 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg },
   content: { padding: spacing.lg, gap: 12 },
   title: { ...font.title, color: colors.ink },
+  heading: { ...font.heading, color: colors.ink },
   muted: { ...font.small, color: colors.muted },
+  error: { ...font.body, color: colors.bad },
   panel: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
