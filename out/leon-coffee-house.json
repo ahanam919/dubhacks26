@@ -862,13 +862,10 @@
     }
   ],
   "hook": {
-    "hook": null,
-    "sourceUrl": "https://REPLACE-WITH-LEON-URL",
-    "verified": false,
-    "unsupportedClaims": [
-      "The horchata latte is an example of the shop's Mexican-inspired drinks."
-    ],
-    "rejectedHook": "Leon Coffee House is a family-owned shop in the University District featuring drinks topped with hand-poured latte art, such as a bear, cat or bunny. Visitors can also enjoy Mexican-inspired drinks like the horchata latte, alongside sandwiches, waffles, and pork tamales."
+    "hook": "At Leon Coffee House, drinks feature hand-poured latte art like bears, cats, and bunnies shaped by baristas who train for about three months. The menu reflects the owner's and staff's Mexican culture.",
+    "sourceUrl": "https://king5.com/article/entertainment/television/programs/evening/latte-art-delicious-drinks-leon-coffee-house-seattle-university-district/281-5b6ad329-3218-4733-bf38-b14cef3aaa3d",
+    "verified": true,
+    "unsupportedClaims": []
   },
   "geofence": {
     "message": "Near Starbucks? Leon Coffee House has CAFE MADRID for $4.60, {minutes} min away."
