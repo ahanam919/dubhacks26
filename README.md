@@ -1,6 +1,6 @@
-# Local Swap
+# Around the Corner
 
-Local Swap suggests an independent coffee shop when you're about to go to a chain. Search for a drink ("PSL", "oat milk chai", "something sweet") or walk near a Starbucks, and the app shows a nearby local shop that has the same drink, how its price compares, and a short "why go" story taken from the shop's own pages or press. You can then place a pickup order.
+Around the Corner suggests an independent coffee shop when you're about to go to a chain. Search for a drink ("PSL", "oat milk chai", "something sweet") or walk near a Starbucks, and the app shows a nearby local shop that has the same drink, how its price compares, and a short "why go" story taken from the shop's own pages or press. You can then place a pickup order.
 
 Built at DubHacks 2026. The demo area is Seattle's U District (the Ave and University Village).
 
