@@ -44,6 +44,7 @@ CREATE TABLE concept (
   id        text PRIMARY KEY,          -- e.g. 'pumpkin_spice_latte'
   name      text NOT NULL,
   aliases   text[] NOT NULL DEFAULT '{}',
+  default_chain text,                  -- which chain this drink is compared against (set by the classify_concepts job)
   embedding vector(768)
 );
 
@@ -78,14 +79,17 @@ CREATE UNIQUE INDEX menu_item_unique_idx
 CREATE TABLE chain_reference (
   id                 serial PRIMARY KEY,
   chain_name         text NOT NULL,
+  item_name          text,             -- the chain's own name for it, e.g. 'Mango Jasmine Green Tea'
   concept_id         text NOT NULL REFERENCES concept(id),
   size               text NOT NULL,
   approx_price_cents integer NOT NULL,
   as_of_date         date NOT NULL,
   source_url         text,
-  is_featured        boolean NOT NULL DEFAULT false,
-  UNIQUE (chain_name, concept_id, size)
+  is_featured        boolean NOT NULL DEFAULT false
 );
+-- One row per ITEM, so several items under one concept (many fruit teas) can coexist.
+CREATE UNIQUE INDEX chain_reference_item_unique
+  ON chain_reference (chain_name, concept_id, size, (coalesce(item_name, '')));
 CREATE UNIQUE INDEX chain_one_featured_idx
   ON chain_reference (chain_name) WHERE is_featured;
 
