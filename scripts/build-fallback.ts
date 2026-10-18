@@ -19,26 +19,40 @@ console.log(`chain rows: ${chainRows.length} total, ${chainRows.filter((r) => r.
 const read = (p: string) => (existsSync(p) ? readFileSync(p, "utf8") : null);
 const titleCase = (s: string) => s.split("-").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
 
+const IMAGE_MIME: Record<string, string> = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp" };
+// samples/<slug>-menu.txt and/or menu photos: samples/<slug>-menu.jpg (also -menu-2.jpg and so on)
+const MENU_FILE = /^(.*)-menu(?:-\d+)?\.(txt|jpe?g|png|webp)$/i;
+
 async function main() {
   mkdirSync("out", { recursive: true });
-  const slugs = readdirSync("samples")
-    .filter((f) => f.endsWith("-menu.txt"))
-    .map((f) => f.replace(/-menu\.txt$/, ""));
+  const sampleFiles = readdirSync("samples");
+  const slugs = [...new Set(sampleFiles.map((f) => f.match(MENU_FILE)?.[1]).filter((s): s is string => !!s))];
 
   if (slugs.length === 0) {
-    console.error("No samples/<slug>-menu.txt files found.");
+    console.error("No samples/<slug>-menu.txt (or -menu.jpg/.png/.webp) files found.");
     process.exit(1);
   }
 
   for (const slug of slugs) {
     const shopName = titleCase(slug);
     console.log(`\n== ${slug}`);
-    const menuText = read(`samples/${slug}-menu.txt`)!;
+    const menuText = read(`samples/${slug}-menu.txt`);
+    const images = sampleFiles
+      .filter((f) => {
+        const m = f.match(MENU_FILE);
+        return m !== null && m[1] === slug && m[2].toLowerCase() !== "txt";
+      })
+      .sort()
+      .map((f) => ({ mimeType: IMAGE_MIME[f.split(".").pop()!.toLowerCase()], data: readFileSync(`samples/${f}`) }));
     const aboutText = read(`samples/${slug}-about.txt`);
     const sourceUrl = (read(`samples/${slug}-url.txt`) ?? "").trim();
     const result: any = { slug, shopName, builtAt: new Date().toISOString(), errors: [] };
 
-    const menu = await ai.extractMenu({ shopName, text: menuText });
+    // Menu photos win over menu text: the photo is where the prices are when the text menu has none.
+    if (images.length) console.log(`using ${images.length} menu photo(s) for ${slug}`);
+    const menu = images.length
+      ? await ai.extractMenu({ shopName, images })
+      : await ai.extractMenu({ shopName, text: menuText ?? "" });
     await sleep(GAP_MS);
     if (menu.error) result.errors.push(`extractMenu: ${menu.error}`);
     result.notes = menu.notes ?? null;

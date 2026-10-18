@@ -69,3 +69,39 @@ export function findMenuLinks(html: string, baseUrl: string, max = 3): string[] 
   found.sort((a, b) => Number(/menu/i.test(b)) - Number(/menu/i.test(a)));
   return found.slice(0, max);
 }
+export type FetchedImage = { mimeType: string; data: Buffer };
+const IMG_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+// Downloads an image (max 4 MB, JPEG/PNG/WebP only). Returns null for anything else.
+export async function fetchImage(url: string): Promise<FetchedImage | null> {
+  await politeWait();
+  try {
+    const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "image/*" }, redirect: "follow", signal: AbortSignal.timeout(20_000) });
+    if (!res.ok) return null;
+    const mimeType = (res.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
+    if (!IMG_TYPES.includes(mimeType)) return null;
+    const data = Buffer.from(await res.arrayBuffer());
+    return data.byteLength > 0 && data.byteLength <= 4 * 1024 * 1024 ? { mimeType, data } : null;
+  } catch {
+    return null;
+  }
+}
+
+// <img> tags on a page that look like a menu: "menu", "drink", "beverage" or "price" in the file name or alt text.
+export function findMenuImages(html: string, baseUrl: string, max = 3): string[] {
+  const found: string[] = [];
+  for (const m of html.matchAll(/<img\b[^>]*>/gi)) {
+    const tag = m[0];
+    const src = /\b(?:data-src|src)\s*=\s*["']([^"']+)["']/i.exec(tag)?.[1];
+    if (!src || src.startsWith("data:")) continue;
+    const alt = /\balt\s*=\s*["']([^"']*)["']/i.exec(tag)?.[1] ?? "";
+    if (!/menu|drink|beverage|price/i.test(src + " " + alt)) continue;
+    if (/logo|icon|sprite|avatar|favicon/i.test(src)) continue;
+    try {
+      const abs = new URL(src, baseUrl);
+      if (abs.protocol !== "https:" && abs.protocol !== "http:") continue;
+      if (!found.includes(abs.href)) found.push(abs.href);
+    } catch { /* bad src */ }
+  }
+  return found.slice(0, max);
+}
