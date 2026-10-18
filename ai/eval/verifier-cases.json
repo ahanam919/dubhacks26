@@ -1,0 +1,22 @@
+{
+  "source": "samples/leon-coffee-house-about.txt",
+  "cases": [
+    { "id": "p1-basic-true", "expect": "pass", "hook": "Leon Coffee House is a family-owned Mexican coffee shop in Seattle's University District.", "why": "Directly stated in source 1." },
+    { "id": "p2-paraphrase", "expect": "pass", "hook": "A Mexican, family-run coffee shop right next to the Neptune Theatre in the U District.", "why": "Paraphrase: family-run for family owned, next to the Neptune Theater." },
+    { "id": "p3-opening", "expect": "pass", "hook": "Lupe Chavez and his family opened Leon Coffee House next to the Neptune Theater in November 2021.", "why": "Stated in source 2." },
+    { "id": "p4-latte-art", "expect": "pass", "hook": "Baristas train for about three months to learn the shop's hand-poured latte art.", "why": "Stated in source 3." },
+    { "id": "p5-attributed", "expect": "pass", "hook": "According to a barista, people travel from places like Oregon for the horchata latte.", "why": "Stated in source 3, attributed to a barista." },
+    { "id": "p6-decor", "expect": "pass", "hook": "The two-story shop is decorated with Frida Kahlo paintings and neon signs.", "why": "Stated in source 4." },
+
+    { "id": "b1-wrong-year", "expect": "block", "hook": "Leon Coffee House opened in 2015 next to the Neptune Theater.", "why": "Wrong year (2015 not in source). Rule check." },
+    { "id": "b2-wrong-year-2", "expect": "block", "hook": "Lupe Chavez and his family opened it in November 2019.", "why": "Wrong year. Rule check." },
+    { "id": "b3-invented-sourcing", "expect": "block", "hook": "Their beans are organic and fair-trade.", "why": "Sourcing never stated. Model check." },
+    { "id": "b4-best-in-seattle", "expect": "block", "hook": "The best coffee in Seattle.", "why": "Superlative not in source. Rule check." },
+    { "id": "b5-real-plus-fake", "expect": "block", "hook": "A family-owned Mexican coffee shop that roasts all of its own beans in-house.", "why": "Real fact plus a fake one. Model check, partial support rejects." },
+    { "id": "b6-invented-person", "expect": "block", "hook": "Founded by Maria Lopez and her sister.", "why": "Wrong founder. Model check." },
+    { "id": "b7-affiliation", "expect": "block", "hook": "The official coffee partner of the Neptune Theatre.", "why": "Implied partnership. Model check." },
+    { "id": "b8-award", "expect": "block", "hook": "Its horchata latte won a Seattle Weekly award.", "why": "Invented award. Rule check." },
+    { "id": "b9-only", "expect": "block", "hook": "Seattle's only Mexican coffee shop.", "why": "Superlative not in source. Rule check." }
+  ],
+  "noStorySource": "We love coffee and community. Come visit us and enjoy a great cup. Open daily."
+}

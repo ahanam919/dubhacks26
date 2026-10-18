@@ -39,6 +39,8 @@ export async function generateJson<T>(opts: {
   fast?: boolean;
   timeoutMs?: number;
   attempts?: number;
+  /** Explicit model list (in order) instead of model + config fallbacks. Used by the verifier. */
+  models?: string[];
 }): Promise<T> {
   const attempts = opts.attempts ?? (opts.fast ? 1 : 2);
   const timeoutMs = opts.timeoutMs ?? (opts.fast ? 5000 : config.timeoutMs);
@@ -51,7 +53,7 @@ export async function generateJson<T>(opts: {
     }
     models = [opts.model];
   } else {
-    const all = Array.from(new Set([opts.model, ...config.models.fallbacks]));
+    const all = Array.from(new Set(opts.models ?? [opts.model, ...config.models.fallbacks]));
     const now = Date.now();
     const active = all.filter((m) => (cooldown.get(m) ?? 0) <= now);
     // If every model is cooling down, try them all rather than failing outright.
