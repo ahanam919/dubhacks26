@@ -13,7 +13,17 @@
     "name": "Latte",
     "aliases": [
       "caffe latte",
-      "flavored latte"
+      "flavored latte",
+      "protein latte",
+      "blonde vanilla latte",
+      "cinnamon dolce latte",
+      "honey oatmilk latte",
+      "starbucks reserve latte",
+      "pecan crunch latte",
+      "lavender latte",
+      "caramel brulee latte",
+      "chestnut praline latte",
+      "sugar cookie latte"
     ]
   },
   {
@@ -24,7 +34,9 @@
   {
     "id": "americano",
     "name": "Americano",
-    "aliases": []
+    "aliases": [
+      "caffe americano"
+    ]
   },
   {
     "id": "espresso",
@@ -37,48 +49,75 @@
     "id": "macchiato",
     "name": "Macchiato",
     "aliases": [
-      "caramel macchiato"
+      "caramel macchiato",
+      "espresso macchiato",
+      "apple crisp oatmilk macchiato"
     ]
   },
   {
     "id": "cold_brew",
     "name": "Cold brew",
     "aliases": [
-      "cold coffee"
+      "cold coffee",
+      "sweet cream cold brew",
+      "cream cold brew",
+      "cold foam cold brew",
+      "pumpkin cream cold brew",
+      "salted caramel cream cold brew",
+      "chocolate cream cold brew",
+      "vanilla sweet cream cold brew"
     ]
   },
   {
     "id": "mocha",
     "name": "Mocha",
     "aliases": [
-      "chocolate latte"
+      "chocolate latte",
+      "caffe mocha",
+      "peppermint mocha"
     ]
   },
   {
     "id": "white_mocha",
     "name": "White mocha",
-    "aliases": []
+    "aliases": [
+      "white chocolate mocha",
+      "toasted white chocolate mocha"
+    ]
   },
   {
     "id": "chai_latte",
     "name": "Chai latte",
     "aliases": [
       "chai",
-      "chai tea latte"
+      "chai tea latte",
+      "iced chaider",
+      "chaider",
+      "pumpkin spice chai",
+      "pumpkin cream chai",
+      "oat chai"
     ]
   },
   {
     "id": "matcha_latte",
     "name": "Matcha latte",
     "aliases": [
-      "matcha"
+      "matcha",
+      "matcha tea latte",
+      "protein matcha",
+      "matcha milk tea",
+      "strawberry matcha",
+      "pumpkin cream matcha",
+      "dubai chocolate matcha"
     ]
   },
   {
     "id": "hot_chocolate",
     "name": "Hot chocolate",
     "aliases": [
-      "cocoa"
+      "cocoa",
+      "white hot chocolate",
+      "signature hot chocolate"
     ]
   },
   {
@@ -91,7 +130,12 @@
     "name": "Frappe",
     "aliases": [
       "frappuccino",
-      "blended coffee"
+      "blended coffee",
+      "java chip frappuccino",
+      "mocha cookie crumble frappuccino",
+      "caramel ribbon crunch frappuccino",
+      "coffee frappuccino",
+      "blended beverage"
     ]
   },
   {
@@ -105,18 +149,29 @@
     "id": "taro_latte",
     "name": "Taro latte",
     "aliases": [
-      "taro"
+      "taro",
+      "taro milk tea"
     ]
   },
   {
     "id": "iced_tea",
     "name": "Iced tea",
-    "aliases": []
+    "aliases": [
+      "iced black tea",
+      "iced green tea",
+      "iced passion tango tea",
+      "iced peach green tea",
+      "sweet tea",
+      "unsweetened iced tea"
+    ]
   },
   {
     "id": "hot_tea",
     "name": "Hot tea",
-    "aliases": []
+    "aliases": [
+      "brewed tea",
+      "tea bag"
+    ]
   },
   {
     "id": "italian_soda",
@@ -127,5 +182,518 @@
     "id": "ginger_beer",
     "name": "Ginger beer",
     "aliases": []
+  },
+  {
+    "id": "flat_white",
+    "name": "Flat white",
+    "aliases": []
+  },
+  {
+    "id": "cortado",
+    "name": "Cortado",
+    "aliases": [
+      "gibraltar",
+      "pecan cortado"
+    ]
+  },
+  {
+    "id": "breve",
+    "name": "Breve",
+    "aliases": [
+      "half and half latte"
+    ]
+  },
+  {
+    "id": "cafe_au_lait",
+    "name": "Cafe au lait",
+    "aliases": [
+      "caffe misto",
+      "cafe misto",
+      "misto"
+    ]
+  },
+  {
+    "id": "doppio",
+    "name": "Doppio",
+    "aliases": [
+      "double espresso",
+      "double shot"
+    ]
+  },
+  {
+    "id": "red_eye",
+    "name": "Red eye",
+    "aliases": [
+      "black eye",
+      "dead eye"
+    ]
+  },
+  {
+    "id": "dirty_chai",
+    "name": "Dirty chai",
+    "aliases": [
+      "chai with espresso"
+    ]
+  },
+  {
+    "id": "dirty_matcha",
+    "name": "Dirty matcha",
+    "aliases": [
+      "matcha with espresso"
+    ]
+  },
+  {
+    "id": "espresso_tonic",
+    "name": "Espresso tonic",
+    "aliases": [
+      "espresso and tonic",
+      "coffee tonic"
+    ]
+  },
+  {
+    "id": "shakerato",
+    "name": "Shakerato",
+    "aliases": [
+      "shaken espresso",
+      "iced shaken espresso",
+      "oatmilk shaken espresso",
+      "brown sugar shaken espresso",
+      "toasted vanilla shaken espresso",
+      "pumpkin cream shaken espresso"
+    ]
+  },
+  {
+    "id": "einspanner",
+    "name": "Einspanner",
+    "aliases": [
+      "einspaenner",
+      "vienna coffee"
+    ]
+  },
+  {
+    "id": "vietnamese_coffee",
+    "name": "Vietnamese coffee",
+    "aliases": [
+      "ca phe sua da",
+      "vietnamese iced coffee"
+    ]
+  },
+  {
+    "id": "cafe_bombon",
+    "name": "Cafe bombon",
+    "aliases": [
+      "bombon"
+    ]
+  },
+  {
+    "id": "cafe_con_leche",
+    "name": "Cafe con leche",
+    "aliases": []
+  },
+  {
+    "id": "drip_coffee",
+    "name": "Drip coffee",
+    "aliases": [
+      "house coffee",
+      "brewed coffee",
+      "coffee of the day",
+      "regular coffee",
+      "batch brew",
+      "pike place",
+      "pike place roast",
+      "blonde roast",
+      "dark roast",
+      "medium roast",
+      "decaf coffee",
+      "half caff",
+      "1971 roast"
+    ]
+  },
+  {
+    "id": "pour_over",
+    "name": "Pour over",
+    "aliases": [
+      "v60",
+      "chemex",
+      "hand drip"
+    ]
+  },
+  {
+    "id": "french_press",
+    "name": "French press",
+    "aliases": []
+  },
+  {
+    "id": "iced_coffee",
+    "name": "Iced coffee",
+    "aliases": [
+      "cold coffee drink"
+    ]
+  },
+  {
+    "id": "nitro_cold_brew",
+    "name": "Nitro cold brew",
+    "aliases": [
+      "nitro coffee",
+      "nitro"
+    ]
+  },
+  {
+    "id": "london_fog",
+    "name": "London fog",
+    "aliases": [
+      "seattle fog",
+      "earl grey latte",
+      "vancouver fog",
+      "london fog tea latte"
+    ]
+  },
+  {
+    "id": "black_tea",
+    "name": "Black tea",
+    "aliases": [
+      "earl grey",
+      "english breakfast",
+      "assam",
+      "royal english breakfast"
+    ]
+  },
+  {
+    "id": "green_tea",
+    "name": "Green tea",
+    "aliases": [
+      "jasmine tea",
+      "sencha",
+      "emperors clouds and mist",
+      "jade citrus mint"
+    ]
+  },
+  {
+    "id": "herbal_tea",
+    "name": "Herbal tea",
+    "aliases": [
+      "chamomile",
+      "peppermint tea",
+      "hibiscus tea",
+      "tisane",
+      "honey citrus mint",
+      "medicine ball",
+      "mint majesty",
+      "peach tranquility",
+      "chamomile mint blossom",
+      "passion tango tea"
+    ]
+  },
+  {
+    "id": "chai_tea",
+    "name": "Chai tea",
+    "aliases": [
+      "plain chai",
+      "masala chai"
+    ]
+  },
+  {
+    "id": "hojicha_latte",
+    "name": "Hojicha latte",
+    "aliases": [
+      "hojicha",
+      "roasted green tea latte"
+    ]
+  },
+  {
+    "id": "milk_tea",
+    "name": "Milk tea",
+    "aliases": [
+      "black milk tea",
+      "royal milk tea",
+      "hong kong milk tea",
+      "jasmine milk tea",
+      "oolong milk tea",
+      "earl grey milk tea",
+      "honeydew milk tea",
+      "strawberry milk tea",
+      "coconut milk tea",
+      "almond milk tea",
+      "okinawa milk tea",
+      "hokkaido milk tea",
+      "classic milk tea"
+    ]
+  },
+  {
+    "id": "thai_tea",
+    "name": "Thai tea",
+    "aliases": [
+      "thai iced tea",
+      "thai milk tea"
+    ]
+  },
+  {
+    "id": "bubble_tea",
+    "name": "Bubble tea",
+    "aliases": [
+      "boba",
+      "boba tea",
+      "pearl milk tea",
+      "tapioca tea",
+      "boba milk tea"
+    ]
+  },
+  {
+    "id": "brown_sugar_boba",
+    "name": "Brown sugar boba",
+    "aliases": [
+      "tiger milk",
+      "tiger sugar",
+      "brown sugar milk",
+      "brown sugar pearl milk",
+      "brown sugar boba milk",
+      "brown sugar milk tea"
+    ]
+  },
+  {
+    "id": "fruit_tea",
+    "name": "Fruit tea",
+    "aliases": [
+      "mango tea",
+      "passionfruit tea",
+      "passion fruit tea",
+      "lychee tea",
+      "peach tea",
+      "wintermelon tea",
+      "winter melon tea",
+      "strawberry tea",
+      "kiwi tea",
+      "fruit tea with jelly"
+    ]
+  },
+  {
+    "id": "cheese_foam_tea",
+    "name": "Cheese foam tea",
+    "aliases": [
+      "cheese tea",
+      "salted cream tea",
+      "cream cap tea"
+    ]
+  },
+  {
+    "id": "yakult_drink",
+    "name": "Yakult drink",
+    "aliases": [
+      "yakult",
+      "yakult green tea",
+      "yakult tea"
+    ]
+  },
+  {
+    "id": "slush",
+    "name": "Slush",
+    "aliases": [
+      "fruit slush",
+      "mango slush",
+      "ice blended drink",
+      "taro slush",
+      "tea slush",
+      "blended tea"
+    ]
+  },
+  {
+    "id": "ube_latte",
+    "name": "Ube latte",
+    "aliases": [
+      "ube"
+    ]
+  },
+  {
+    "id": "golden_milk",
+    "name": "Golden milk",
+    "aliases": [
+      "turmeric latte",
+      "haldi doodh"
+    ]
+  },
+  {
+    "id": "arnold_palmer",
+    "name": "Arnold Palmer",
+    "aliases": [
+      "half and half iced tea",
+      "tea lemonade",
+      "black tea lemonade",
+      "green tea lemonade",
+      "passion tango tea lemonade",
+      "peach green tea lemonade"
+    ]
+  },
+  {
+    "id": "steamer",
+    "name": "Steamer",
+    "aliases": [
+      "steamed milk",
+      "vanilla steamer",
+      "babyccino",
+      "vanilla creme",
+      "pistachio creme",
+      "creme steamer"
+    ]
+  },
+  {
+    "id": "hot_apple_cider",
+    "name": "Hot apple cider",
+    "aliases": [
+      "apple cider",
+      "mulled cider",
+      "caramel apple spice"
+    ]
+  },
+  {
+    "id": "mexican_hot_chocolate",
+    "name": "Mexican hot chocolate",
+    "aliases": []
+  },
+  {
+    "id": "salep",
+    "name": "Salep",
+    "aliases": [
+      "sahlab"
+    ]
+  },
+  {
+    "id": "creme_frappe",
+    "name": "Creme frappe",
+    "aliases": [
+      "creme frappuccino",
+      "vanilla bean creme frappuccino",
+      "strawberry creme frappuccino",
+      "matcha creme frappuccino",
+      "caffeine free frappuccino"
+    ]
+  },
+  {
+    "id": "lemonade",
+    "name": "Lemonade",
+    "aliases": [
+      "hibiscus lemonade",
+      "fresh lemonade",
+      "strawberry lemonade"
+    ]
+  },
+  {
+    "id": "refresher",
+    "name": "Refresher",
+    "aliases": [
+      "fruit refresher",
+      "energy refresher",
+      "pink drink",
+      "dragon drink",
+      "paradise drink",
+      "mango dragonfruit",
+      "strawberry acai",
+      "strawberry acai refresher",
+      "mango strawberry",
+      "cannon ball",
+      "mango dream",
+      "pineapple passionfruit",
+      "energy drink"
+    ]
+  },
+  {
+    "id": "kombucha",
+    "name": "Kombucha",
+    "aliases": []
+  },
+  {
+    "id": "soda",
+    "name": "Soda",
+    "aliases": [
+      "root beer",
+      "cola",
+      "coke",
+      "mexican coke",
+      "craft soda",
+      "house made soda",
+      "shrub",
+      "pear cinnamon soda"
+    ]
+  },
+  {
+    "id": "sparkling_water",
+    "name": "Sparkling water",
+    "aliases": [
+      "seltzer",
+      "san pellegrino",
+      "mineral water",
+      "spindrift"
+    ]
+  },
+  {
+    "id": "water",
+    "name": "Water",
+    "aliases": [
+      "bottled water",
+      "spring water",
+      "ethos water"
+    ]
+  },
+  {
+    "id": "juice",
+    "name": "Juice",
+    "aliases": [
+      "orange juice",
+      "apple juice",
+      "fresh juice",
+      "evolution fresh"
+    ]
+  },
+  {
+    "id": "milk",
+    "name": "Milk",
+    "aliases": [
+      "cold milk",
+      "glass of milk",
+      "chocolate milk",
+      "lowfat milk"
+    ]
+  },
+  {
+    "id": "protein_shake",
+    "name": "Protein shake",
+    "aliases": [
+      "nutrition shake",
+      "koia",
+      "protein drink",
+      "protein beverage"
+    ]
+  },
+  {
+    "id": "wellness_shot",
+    "name": "Wellness shot",
+    "aliases": [
+      "ginger shot",
+      "turmeric shot",
+      "supershot",
+      "immunity shot"
+    ]
+  },
+  {
+    "id": "smoothie",
+    "name": "Smoothie",
+    "aliases": [
+      "fruit smoothie"
+    ]
+  },
+  {
+    "id": "milkshake",
+    "name": "Milkshake",
+    "aliases": [
+      "shake"
+    ]
+  },
+  {
+    "id": "cream_soda",
+    "name": "Cream soda",
+    "aliases": [
+      "root beer cream",
+      "soda float",
+      "float"
+    ]
   }
 ]
