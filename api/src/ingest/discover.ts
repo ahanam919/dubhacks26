@@ -9,6 +9,7 @@ export async function runDiscover(payload: Record<string, unknown>): Promise<voi
   const rect = (payload.rect as Rect | undefined) ?? zone?.rect;
   if (!rect) throw new Error(`discover_area needs payload.area (${Object.keys(ZONES).join(", ")}) or payload.rect`);
   const deep = typeof payload.deep === "boolean" ? payload.deep : zone?.deep ?? false;
+  const maps = deep && (typeof payload.maps === "boolean" ? payload.maps : zone?.maps ?? false);
   const max = Number(payload.max ?? zone?.max ?? 40);
   const force = payload.force === true;
 
@@ -48,9 +49,9 @@ export async function runDiscover(payload: Record<string, unknown>): Promise<voi
     if (n >= max) break;
     if (done.has(p.id) || queued.has(p.id)) continue;
     await pool.query(`INSERT INTO job (type, payload) VALUES ('ingest_shop', $1)`, [
-      JSON.stringify({ placeId: p.id, shopName: p.displayName?.text, deep }),
+      JSON.stringify({ placeId: p.id, shopName: p.displayName?.text, deep, maps }),
     ]);
     n++;
   }
-  console.log(`discover ${area || "custom rect"} (deep=${deep}): ${hits.size} found, ${wanted.length} local cafes, ${n} queued`);
+  console.log(`discover ${area || "custom rect"} (deep=${deep}, maps=${maps}): ${hits.size} found, ${wanted.length} local cafes, ${n} queued`);
 }

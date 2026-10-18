@@ -5,33 +5,38 @@ import type { Rect } from "./places";
 //
 //   rect  the search box (low = south-west corner, high = north-east corner)
 //   deep  true  = read menu PHOTOS as well as the website (team photos, images on the shop's site,
-//                 and Maps photos if MAPS_PHOTO_MENUS=1). Costs more Gemini calls. Use for demo areas.
+//                 and Maps photos if maps=true). Costs more Gemini calls. Use for demo areas.
 //         false = website text only. A shop with no readable menu is still stored (it shows on the
 //                 map) but gets no menu items.
+//   maps  true  = (deep zones only) also read Google Maps photos for menus when nothing else gave enough items.
+//                 Costs the most Gemini calls, so keep it on only for the demo block.
 //   max   most shops one discover_area job will queue (protects Places and Gemini quota)
 //
 // Run a zone:  INSERT INTO job (type, payload) VALUES ('discover_area', '{"area":"ave_block"}');
-// Overrides in the payload: "deep", "max", "force" (re-ingest shops already done), or a "rect".
+// Overrides in the payload: "deep", "maps", "max", "force" (re-ingest shops already done), or a "rect".
 // ---------------------------------------------------------------------------------------------
-export type Zone = { rect: Rect; deep: boolean; max: number };
+export type Zone = { rect: Rect; deep: boolean; maps: boolean; max: number };
 
 export const ZONES: Record<string, Zone> = {
   // The Ave (University Way NE) from NE 42nd to NE 47th. Approximate box: check it against a map.
   ave_block: {
     rect: { low: { latitude: 47.6583, longitude: -122.315 }, high: { latitude: 47.664, longitude: -122.3115 } },
     deep: true,
+    maps: true,
     max: 40,
   },
   // University Village shopping center.
   uvillage: {
     rect: { low: { latitude: 47.66, longitude: -122.304 }, high: { latitude: 47.666, longitude: -122.294 } },
     deep: true,
+    maps: false,
     max: 40,
   },
   // The wider U District. Shops here appear on the map; menus only if the website has them.
   udistrict: {
     rect: { low: { latitude: 47.6535, longitude: -122.3205 }, high: { latitude: 47.668, longitude: -122.3065 } },
     deep: false,
+    maps: false,
     max: 60,
   },
 };
