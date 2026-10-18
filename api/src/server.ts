@@ -20,5 +20,23 @@ app.get("/health/db", async () => {
 
 await app.register(geofenceMock, { prefix: "/geofence" });
 
+// Queues an ingestion job. The worker does the slow work in the background.
+// The token stops strangers from queuing jobs that spend your Gemini and Google quota.
+app.post("/ingest", async (req, reply) => {
+  const token = process.env.INGEST_TOKEN;
+  if (!token || req.headers["x-ingest-token"] !== token) {
+    return reply.code(401).send({ error: "unauthorized" });
+  }
+  const body = (req.body ?? {}) as { placeId?: string; shopName?: string; websiteUrl?: string };
+  if (!body.placeId && !body.shopName) {
+    return reply.code(400).send({ error: "placeId or shopName required" });
+  }
+  const { rows } = await pool.query(
+    `INSERT INTO job (type, payload) VALUES ('ingest_shop', $1) RETURNING id`,
+    [body],
+  );
+  return { queued: true, jobId: rows[0].id };
+});
+
 const port = Number(process.env.PORT ?? 3000);
 await app.listen({ port, host: "0.0.0.0" });
