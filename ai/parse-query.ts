@@ -72,7 +72,7 @@ ${concepts.map((c) => `- ${c.id}: ${c.name}${c.aliases?.length ? ` (also: ${c.al
 Rules:
 - itemConcept must be exactly one id from the list, or null if nothing fits. Never invent an id.
 - Pick the most specific concept (e.g. "iced pumpkin latte" -> pumpkin_spice_latte, not latte).
-- If the craving is too vague to search (e.g. "something sweet"), set needsClarification true and write one short question; otherwise false and clarifyingQuestion null.`;
+- If the craving is too vague to search (e.g. "something sweet"), set needsClarification true and write one short question that only offers drinks or flavors from the list above, such as pumpkin, chai or matcha; otherwise false and clarifyingQuestion null.`;
 
 export async function parseQuery(
   text: string,
@@ -108,7 +108,7 @@ export async function parseQuery(
     const r = base(valid);
     if (!valid && out?.needsClarification && out.clarifyingQuestion) {
       r.needsClarification = true;
-      r.clarifyingQuestion = out.clarifyingQuestion;
+      r.clarifyingQuestion = "Which of these sounds good: " + concepts.slice(0, 4).map((c) => c.name).join(", ") + "?";
     }
     return r;
   } catch (err) {

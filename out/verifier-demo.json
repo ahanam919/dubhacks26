@@ -1,0 +1,78 @@
+{
+  "shop": "leon-coffee-house",
+  "builtAt": "2026-10-18T09:20:42.464Z",
+  "source": "samples/leon-coffee-house-about.txt",
+  "cases": [
+    {
+      "label": "Real hook (should pass)",
+      "hook": "At Leon Coffee House, drinks feature hand-poured latte art like bears, cats, and bunnies shaped by baristas who train for about three months. The menu reflects the owner's and staff's Mexican culture.",
+      "supported": true,
+      "blockedBy": null,
+      "unsupportedClaims": [],
+      "evidence": [
+        "Its drinks are topped with hand-poured latte art, such as a bear, cat or bunny.",
+        "Baristas train for roughly three months to learn the latte art.",
+        "The menu reflects the owner's and staff's Mexican culture."
+      ],
+      "error": null,
+      "expectedSupported": true,
+      "matchedExpectation": true
+    },
+    {
+      "label": "Real writer output, blocked by the verifier",
+      "hook": "Leon Coffee House is a family-owned shop in the University District featuring drinks topped with hand-poured latte art, such as a bear, cat or bunny. Visitors can also enjoy Mexican-inspired drinks like the horchata latte, alongside sandwiches, waffles, and pork tamales.",
+      "supported": false,
+      "blockedBy": "model",
+      "unsupportedClaims": [
+        "Visitors can enjoy Mexican-inspired drinks like the horchata latte."
+      ],
+      "evidence": [
+        "Mexican family owned coffee shop in University District (Seattle).",
+        "Its drinks are topped with hand-poured latte art, such as a bear, cat or bunny.",
+        "The food menu includes granola, sandwiches, pork tamales and waffles with whipped cream."
+      ],
+      "error": null,
+      "expectedSupported": false,
+      "matchedExpectation": true
+    },
+    {
+      "label": "Superlative not in the source (rule layer)",
+      "hook": "Leon Coffee House serves the best coffee in Seattle.",
+      "supported": false,
+      "blockedBy": "rule",
+      "unsupportedClaims": [
+        "superlative not in source: best"
+      ],
+      "evidence": [],
+      "error": null,
+      "expectedSupported": false,
+      "matchedExpectation": true
+    },
+    {
+      "label": "Invented sourcing (model layer)",
+      "hook": "Leon Coffee House roasts all of its own beans in-house.",
+      "supported": false,
+      "blockedBy": "model",
+      "unsupportedClaims": [
+        "Leon Coffee House roasts all of its own beans in-house."
+      ],
+      "evidence": [],
+      "error": null,
+      "expectedSupported": false,
+      "matchedExpectation": true
+    },
+    {
+      "label": "Invented partnership (model layer)",
+      "hook": "Leon Coffee House is the official coffee partner of the Neptune Theatre.",
+      "supported": false,
+      "blockedBy": "model",
+      "unsupportedClaims": [
+        "Leon Coffee House is the official coffee partner of the Neptune Theatre"
+      ],
+      "evidence": [],
+      "error": null,
+      "expectedSupported": false,
+      "matchedExpectation": true
+    }
+  ]
+}
