@@ -1,0 +1,506 @@
+{
+  "slug": "leon-coffee-house",
+  "shopName": "Leon Coffee House",
+  "builtAt": "2026-10-18T05:07:57.189Z",
+  "errors": [],
+  "notes": "The item Deleite Espresso ends with a cut off sentence as printed.",
+  "items": [
+    {
+      "name": "Cafe Madrid",
+      "description": "sweet and creamy latte",
+      "priceCents": null,
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 0.85,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Horchata Latte",
+      "description": "mayan rice based latte blended with cinnamon & almond extract",
+      "priceCents": null,
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "horchata_latte",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "cinnamon"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Nutella Mocha",
+      "description": "perfect combination of chocolate mocha, nutella & hazelnut",
+      "priceCents": null,
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "nutella"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Mexican Mocha",
+      "description": "made with ibarra chocolate, real cane sugar & cinnamon",
+      "priceCents": null,
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mexican_hot_chocolate",
+        "confidence": 0.85,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Mocha Diablo",
+      "description": "hot & spicy spin on a mexican mocha",
+      "priceCents": null,
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.8,
+        "attributes": {
+          "flavor": "diablo"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Leon Blanco",
+      "description": "classic white chocolate mocha with a hint of mint",
+      "priceCents": null,
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "white_mocha",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "mint"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Crema de Leche",
+      "description": "espresso sweetened with cajeta milk mix in flavor",
+      "priceCents": null,
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "cafe_bombon",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "cajeta"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Mango Latte",
+      "description": "creamy layer of mango adds a bright & tropical twist to the latte",
+      "priceCents": null,
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "mango"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Latte",
+      "priceCents": null,
+      "category": "TRADITIONAL",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 1,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Cappuccino",
+      "priceCents": null,
+      "category": "TRADITIONAL",
+      "confidence": "high",
+      "match": {
+        "conceptId": "cappuccino",
+        "confidence": 1,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Mocha",
+      "priceCents": null,
+      "category": "TRADITIONAL",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 1,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "White Mocha",
+      "priceCents": null,
+      "category": "TRADITIONAL",
+      "confidence": "high",
+      "match": {
+        "conceptId": "white_mocha",
+        "confidence": 0.95,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Flavored Latte",
+      "priceCents": null,
+      "category": "TRADITIONAL",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 0.85,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Cold Brew Americano",
+      "priceCents": null,
+      "category": "TRADITIONAL",
+      "confidence": "high",
+      "match": {
+        "conceptId": "cold_brew",
+        "confidence": 0.8,
+        "attributes": {
+          "temperature": "iced"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Espresso",
+      "priceCents": null,
+      "category": "TRADITIONAL",
+      "confidence": "high",
+      "match": {
+        "conceptId": "espresso",
+        "confidence": 1,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Macchiato",
+      "priceCents": null,
+      "category": "TRADITIONAL",
+      "confidence": "high",
+      "match": {
+        "conceptId": "macchiato",
+        "confidence": 0.95,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Affogato",
+      "description": "two espresso shots over vanilla ice cream",
+      "priceCents": null,
+      "category": "ICE CREAM",
+      "confidence": "high",
+      "match": {
+        "conceptId": "affogato",
+        "confidence": 0.95,
+        "attributes": {
+          "flavor": "vanilla"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Matcha Affogato",
+      "description": "matcha mix over vanilla ice cream",
+      "priceCents": null,
+      "category": "ICE CREAM",
+      "confidence": "high",
+      "match": {
+        "conceptId": null,
+        "confidence": 0,
+        "attributes": {
+          "flavor": "matcha"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Deleite Espresso",
+      "description": "two espresso shots over vanilla ice cream bar covered with chocolate & ",
+      "priceCents": null,
+      "category": "ICE CREAM",
+      "confidence": "high",
+      "match": {
+        "conceptId": "affogato",
+        "confidence": 0.85,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Hot Chocolate",
+      "priceCents": null,
+      "category": "NON ESPRESSO",
+      "confidence": "high",
+      "match": {
+        "conceptId": "hot_chocolate",
+        "confidence": 1,
+        "attributes": {
+          "temperature": "hot"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Steamers",
+      "priceCents": null,
+      "category": "NON ESPRESSO",
+      "confidence": "high",
+      "match": {
+        "conceptId": "steamer",
+        "confidence": 0.9,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Chai Tea Latte",
+      "priceCents": null,
+      "category": "NON ESPRESSO",
+      "confidence": "high",
+      "match": {
+        "conceptId": "chai_latte",
+        "confidence": 0.95,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Matcha Latte",
+      "priceCents": null,
+      "category": "NON ESPRESSO",
+      "confidence": "high",
+      "match": {
+        "conceptId": "matcha_latte",
+        "confidence": 1,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Iced Mint Matcha",
+      "priceCents": null,
+      "category": "NON ESPRESSO",
+      "confidence": "high",
+      "match": {
+        "conceptId": "matcha_latte",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "mint",
+          "temperature": "iced"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Taro Purple Latte",
+      "priceCents": null,
+      "category": "NON ESPRESSO",
+      "confidence": "high",
+      "match": {
+        "conceptId": "taro_latte",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "purple"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Butterfly Latte",
+      "description": "it's a mix of pea flower tea, coconut and vanilla",
+      "priceCents": null,
+      "category": "NON ESPRESSO",
+      "confidence": "high",
+      "match": {
+        "conceptId": null,
+        "confidence": 0,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Velvet Latte",
+      "description": "sweet & creamy mix inspired by red velvet cake",
+      "priceCents": null,
+      "category": "NON ESPRESSO",
+      "confidence": "high",
+      "match": {
+        "conceptId": null,
+        "confidence": 0,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Turmeric Latte",
+      "description": "antioxidant drink made with tumeric root & organic spices",
+      "priceCents": null,
+      "category": "NON ESPRESSO",
+      "confidence": "high",
+      "match": {
+        "conceptId": null,
+        "confidence": 0,
+        "attributes": {
+          "flavor": "tumeric"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Thai led Tea",
+      "priceCents": null,
+      "category": "OTHER DRINKS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "thai_tea",
+        "confidence": 0.8,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "Hot Tea",
+      "priceCents": null,
+      "category": "OTHER DRINKS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "hot_tea",
+        "confidence": 0.95,
+        "attributes": {
+          "temperature": "hot"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Iced Tea",
+      "priceCents": null,
+      "category": "OTHER DRINKS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "iced_tea",
+        "confidence": 0.95,
+        "attributes": {
+          "temperature": "iced"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Italian Soda",
+      "priceCents": null,
+      "category": "OTHER DRINKS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "italian_soda",
+        "confidence": 1,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "White",
+      "priceCents": null,
+      "category": "FRAPPES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "frappe",
+        "confidence": 0.8,
+        "attributes": {
+          "temperature": "blended"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Caramel",
+      "priceCents": null,
+      "category": "FRAPPES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "frappe",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "caramel",
+          "temperature": "blended"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Matcha Vanilla",
+      "priceCents": null,
+      "category": "FRAPPES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "frappe",
+        "confidence": 0.8,
+        "attributes": {
+          "flavor": "matcha vanilla",
+          "temperature": "blended"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "Cookies & Cream",
+      "priceCents": null,
+      "category": "FRAPPES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "frappe",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "cookies & cream",
+          "temperature": "blended"
+        }
+      },
+      "comparison": null
+    }
+  ],
+  "hook": {
+    "hook": "Leon Coffee House is a family-owned shop in the University District where drinks are topped with hand-poured latte art, such as a bear, cat or bunny. Visitors can enjoy a menu reflecting Mexican culture, including signature drinks like the horchata latte and velvet latte.",
+    "sourceUrl": "https://REPLACE-WITH-LEON-URL",
+    "verified": true,
+    "unsupportedClaims": []
+  },
+  "geofence": {
+    "message": "Near Starbucks? Leon Coffee House has Cafe Madrid, {minutes} min away."
+  }
+}

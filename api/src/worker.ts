@@ -1,6 +1,7 @@
 import "./env";
 import { pool } from "./db";
 import { runIngest } from "./ingest/pipeline";
+import { runDiscover } from "./ingest/discover";
 
 const POLL_MS = 3000;
 const MAX_ATTEMPTS = 3;
@@ -52,6 +53,7 @@ async function main() {
     console.log(`job ${job.id} (${job.type}) attempt ${job.attempts}`);
     try {
       if (job.type === "ingest_shop") await runIngest(job.payload);
+      else if (job.type === "discover_area") await runDiscover(job.payload);
       else throw new Error(`unknown job type: ${job.type}`);
       await finish(job);
       console.log(`job ${job.id} done`);
