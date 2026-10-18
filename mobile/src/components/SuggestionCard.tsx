@@ -1,5 +1,7 @@
 // Card that slides up from the bottom of the map when you walk into a chain's zone:
-// which local shop to try instead, how far it is, and one tap to walking directions.
+// which local shop to try instead and how far it is. "Show route" draws the way there
+// on the app's own map (so you stay in the app); a second tap opens Google Maps for
+// step-by-step directions.
 
 import { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -17,10 +19,15 @@ export type Suggestion = {
 
 type Props = {
   suggestion: Suggestion;
+  /** True once the route is drawn on the map. */
+  routeShown: boolean;
+  /** Which swap this is since the app opened (shown after Show route), or null. */
+  swapNumber?: number | null;
+  onShowRoute: () => void;
   onClose: () => void;
 };
 
-export default function SuggestionCard({ suggestion, onClose }: Props) {
+export default function SuggestionCard({ suggestion, routeShown, swapNumber = null, onShowRoute, onClose }: Props) {
   const insets = useSafeAreaInsets();
   const slide = useRef(new Animated.Value(1)).current; // 1 = hidden below, 0 = in place
 
@@ -60,6 +67,11 @@ export default function SuggestionCard({ suggestion, onClose }: Props) {
       <View style={styles.chips}>
         <Text style={[styles.chip, styles.chipWalk]}>{minutes}</Text>
         {shop.priceCents != null && <Text style={styles.chip}>{formatPrice(shop.priceCents)}</Text>}
+        {swapNumber != null && (
+          <Text style={[styles.chip, styles.chipSwap]}>
+            {swapNumber === 1 ? 'First local swap!' : `Local swap #${swapNumber} today`}
+          </Text>
+        )}
       </View>
 
       <Text style={styles.message}>{message}</Text>
@@ -67,12 +79,20 @@ export default function SuggestionCard({ suggestion, onClose }: Props) {
       <View style={styles.actions}>
         {/* TODO: add "View shop" (opens /shop/[id]) once the app's shops come from the same database. */}
         <View style={styles.action}>
-          <Button label="Directions" onPress={() => void openUrl(directionsUrl(shop))} />
+          {routeShown ? (
+            <Button label="Open in Google Maps" onPress={() => void openUrl(directionsUrl(shop))} />
+          ) : (
+            <Button label="Show route" onPress={onShowRoute} />
+          )}
         </View>
         <View style={styles.action}>
           <Button label="Not now" variant="secondary" onPress={close} />
         </View>
       </View>
+
+      {routeShown && (
+        <Text style={styles.hint}>The dotted line shows the way. Google Maps has step-by-step directions.</Text>
+      )}
     </Animated.View>
   );
 }
@@ -111,7 +131,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   chipWalk: { color: colors.good, backgroundColor: colors.goodSoft },
+  chipSwap: { color: colors.primary, backgroundColor: colors.primarySoft },
   message: { ...font.body, color: colors.ink },
   actions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },
   action: { flex: 1 },
+  hint: { ...font.small, color: colors.muted, textAlign: 'center' },
 });

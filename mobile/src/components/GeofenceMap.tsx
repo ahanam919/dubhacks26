@@ -2,16 +2,17 @@
 //
 // - Chains are red pins, local shops are green. Tap a shop pin, then its label, for
 //   walking directions.
-// - Drag the blue "Pretend I'm here" pin and let go: the app asks the server whether
+// - Tap anywhere on the map (or drag the blue pin) to move "you": the app asks the server whether
 //   that spot is near a chain, the same check a real geofence uses, and shows the
 //   suggestion in a card that slides up from the bottom. (Real background geofencing
 //   would use lib/notifications.ts instead, since the app isn't open then.)
 // - If the API can't be reached, it falls back to built-in demo data and an
 //   on-phone distance check, so the demo still works.
 
-import { useEffect, useMemo, useState } from 'react';
-import { Platform, StyleSheet, Text, type TextStyle, View } from 'react-native';
-import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Platform, Pressable, StyleSheet, Text, type TextStyle, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import MapView, { Circle, Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 import { directionsUrl, openUrl } from '../lib/actions';
 import {
   type CheckResult,
@@ -42,7 +43,7 @@ const ZONE_ACTIVE = { fill: 'rgba(47, 75, 219, 0.14)', stroke: 'rgba(47, 75, 219
 const NO_MATCH_TEXT: Record<NoMatchReason, string> = {
   bad_request: 'That spot could not be checked.',
   inaccurate: 'Location too imprecise to check.',
-  no_chain: 'Not near a chain. Drag your blue pin onto a grey chain pin.',
+  no_chain: 'Not near a chain. Tap the map near a grey chain pin.',
   no_shop: 'Near a chain, but no local shop within walking distance.',
   cooldown: 'Already suggested a shop here recently.',
   quiet_hours: 'Quiet hours: no suggestions right now.',
@@ -52,9 +53,17 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
   const [data, setData] = useState<MapData>(DEMO_MAP_DATA);
   const [usingDemoData, setUsingDemoData] = useState(true);
   const [pin, setPin] = useState<LatLng>(DEMO_CENTER);
-  const [status, setStatus] = useState('Drag the blue pin next to a chain.');
+  const insets = useSafeAreaInsets();
+  const [status, setStatus] = useState('Tap the map near a chain to move your pin.');
   const [suggestedShopId, setSuggestedShopId] = useState<string | null>(null);
   const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
+  // Walking path drawn on this map (straight line from you to the suggested shop).
+  const [route, setRoute] = useState<{ from: LatLng; to: LatLng } | null>(null);
+  const mapRef = useRef<MapView>(null);
+  // Swap counter: how many times you took a suggestion (tapped Show route) since the
+  // app opened. Kept in memory for now; saving it across launches needs storage.
+  const [swapCount, setSwapCount] = useState(0);
+  const [countedThisSuggestion, setCountedThisSuggestion] = useState(false);
 
   // The chain zone the pin is inside, if any (same 100 m radius the server uses).
   const activeChainId = useMemo(
@@ -78,6 +87,8 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
   async function onPinDropped(spot: LatLng) {
     setPin(spot);
     setSuggestion(null);
+    setRoute(null);
+    setCountedThisSuggestion(false);
     setStatus('Checking…');
     try {
       const result =
@@ -99,15 +110,50 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
     }
   }
 
+  // Draw the path to the suggested shop and zoom so both you and the shop are in view,
+  // leaving room at the bottom for the card.
+  function showRoute() {
+    if (!suggestion) return;
+    const to = { lat: suggestion.shop.lat, lng: suggestion.shop.lng };
+    setRoute({ from: pin, to });
+    if (!countedThisSuggestion) {
+      setSwapCount((n) => n + 1);
+      setCountedThisSuggestion(true);
+    }
+    mapRef.current?.fitToCoordinates(
+      [
+        { latitude: pin.lat, longitude: pin.lng },
+        { latitude: to.lat, longitude: to.lng },
+      ],
+      { edgePadding: { top: 140, right: 80, bottom: 420, left: 80 }, animated: true },
+    );
+  }
+
+  function recenter() {
+    mapRef.current?.animateToRegion(DEMO_REGION, 400);
+  }
+
+  function closeSuggestion() {
+    setSuggestion(null);
+    setRoute(null);
+  }
+
   return (
     <View style={styles.container}>
       <MapView
+        ref={mapRef}
         style={StyleSheet.absoluteFill}
         // Google Maps on Android. On iPhone, Apple Maps (Google's map engine on
         // iPhone needs extra setup in a development build).
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         initialRegion={DEMO_REGION}
         showsUserLocation
+        // Tap anywhere to move your pin there (taps on pins are ignored).
+        onPress={(e) => {
+          if (e.nativeEvent.action === 'marker-press') return;
+          const { latitude, longitude } = e.nativeEvent.coordinate;
+          void onPinDropped({ lat: latitude, lng: longitude });
+        }}
       >
         {data.chains.map((c) => {
           const zone = c.id === activeChainId ? ZONE_ACTIVE : ZONE_IDLE;
@@ -123,6 +169,20 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
             />
           );
         })}
+
+        {route && (
+          <Polyline
+            coordinates={[
+              { latitude: route.from.lat, longitude: route.from.lng },
+              { latitude: route.to.lat, longitude: route.to.lng },
+            ]}
+            strokeColor={colors.good}
+            strokeWidth={4}
+            lineDashPattern={[12, 10]}
+            geodesic
+            zIndex={2}
+          />
+        )}
 
         {data.chains.map((c) => (
           <Marker
@@ -162,7 +222,7 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
         <Marker
           coordinate={{ latitude: pin.lat, longitude: pin.lng }}
           title="Pretend I'm here"
-          description="Press and hold, then drag"
+          description="Tap the map to move me, or press and hold to drag"
           anchor={pinAnchor(30)}
           zIndex={4}
           draggable
@@ -174,14 +234,48 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
         </Marker>
       </MapView>
 
+      {/* Legend */}
+      <View style={[styles.legend, { top: insets.top + 8 }]} pointerEvents="none">
+        <LegendItem color={colors.primary} label="You" />
+        <LegendItem color={colors.ink} label="Local" />
+        <LegendItem color={colors.chainMuted} label="Chain" />
+      </View>
+
+      {/* Back to the whole area */}
+      {!suggestion && (
+        <Pressable
+          style={styles.recenter}
+          onPress={recenter}
+          accessibilityRole="button"
+          accessibilityLabel="Show the whole area"
+        >
+          <Text style={styles.recenterText}>Recenter</Text>
+        </Pressable>
+      )}
+
       {suggestion ? (
-        <SuggestionCard suggestion={suggestion} onClose={() => setSuggestion(null)} />
+        <SuggestionCard
+          suggestion={suggestion}
+          routeShown={route != null}
+          swapNumber={countedThisSuggestion ? swapCount : null}
+          onShowRoute={showRoute}
+          onClose={closeSuggestion}
+        />
       ) : (
         <View style={styles.statusBox}>
           {usingDemoData && <Text style={styles.demoTag}>DEMO DATA</Text>}
           <Text style={styles.statusText}>{status}</Text>
         </View>
       )}
+    </View>
+  );
+}
+
+function LegendItem({ color, label }: { color: string; label: string }) {
+  return (
+    <View style={styles.legendItem}>
+      <View style={[styles.legendDot, { backgroundColor: color }]} />
+      <Text style={styles.legendText}>{label}</Text>
     </View>
   );
 }
@@ -278,6 +372,34 @@ function demoCheck(spot: LatLng, data: MapData): CheckResult {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  legend: {
+    position: 'absolute',
+    left: spacing.lg,
+    flexDirection: 'row',
+    gap: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+    borderRadius: radius.pill,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    borderWidth: 1,
+    borderColor: colors.line,
+  },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  legendDot: { width: 10, height: 10, borderRadius: 5, borderWidth: 1.5, borderColor: '#FFFFFF' },
+  legendText: { fontSize: 12, fontWeight: '600', color: colors.ink },
+  recenter: {
+    position: 'absolute',
+    right: spacing.lg,
+    bottom: 120,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.line,
+    elevation: 3,
+  },
+  recenterText: { fontSize: 13, fontWeight: '600', color: colors.primary },
   statusBox: {
     position: 'absolute',
     left: spacing.lg,
