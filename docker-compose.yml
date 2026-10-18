@@ -8,6 +8,14 @@ services:
     expose:
       - "3000"
 
+  worker:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    command: ["npx", "tsx", "src/worker.ts"]
+    env_file: .env
+    restart: unless-stopped
+
   caddy:
     image: caddy:2
     restart: unless-stopped
