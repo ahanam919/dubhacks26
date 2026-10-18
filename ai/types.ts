@@ -14,7 +14,7 @@ export interface ExtractMenuResult {
 
 export interface MatchItem { name: string; description?: string; category?: string }
 export interface MatchConceptResult {
-  conceptId: string | null; confidence: number; attributes: Record<string, unknown>;
+  conceptId: string | null; confidence: number; attributes: Record<string, unknown>; error?: string;
 }
 
 export interface WriteHookInput { shopName: string; sourceText: string; sourceUrl: string }
