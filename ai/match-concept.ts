@@ -101,7 +101,10 @@ ${RULES}`;
     return res;
   } catch (err) {
     console.error("matchConcepts failed:", err);
-    return empty;
+    // Surface the failure so the worker can retry the job instead of saving
+    // the whole menu as "no match".
+    const error = String(err).slice(0, 200);
+    return items.map(() => ({ conceptId: null, confidence: 0, attributes: {}, error }));
   }
 }
 
