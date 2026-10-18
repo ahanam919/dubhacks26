@@ -1,14 +1,15 @@
 {
   "slug": "leon-coffee-house",
   "shopName": "Leon Coffee House",
-  "builtAt": "2026-10-18T05:07:57.189Z",
+  "builtAt": "2026-10-18T07:55:29.163Z",
   "errors": [],
-  "notes": "The item Deleite Espresso ends with a cut off sentence as printed.",
+  "notes": "Bottom banner reads: 'ALL DRINKS ARE HOT UNLESS SPECIFIED ICED'.",
   "items": [
     {
-      "name": "Cafe Madrid",
-      "description": "sweet and creamy latte",
-      "priceCents": null,
+      "name": "CAFE MADRID",
+      "description": "Sweet and creamy latte",
+      "priceCents": 460,
+      "size": "8 oz",
       "category": "SPECIALTIES",
       "confidence": "high",
       "match": {
@@ -19,14 +20,78 @@
       "comparison": null
     },
     {
-      "name": "Horchata Latte",
-      "description": "mayan rice based latte blended with cinnamon & almond extract",
-      "priceCents": null,
+      "name": "CAFE MADRID",
+      "description": "Sweet and creamy latte",
+      "priceCents": 510,
+      "size": "12 oz",
       "category": "SPECIALTIES",
       "confidence": "high",
       "match": {
-        "conceptId": "horchata_latte",
+        "conceptId": "latte",
         "confidence": 0.85,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "CAFE MADRID",
+      "description": "Sweet and creamy latte",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 0.85,
+        "attributes": {}
+      },
+      "comparison": {
+        "chainReferenceId": "2",
+        "sizeMatch": "same",
+        "priceDiffCents": 70,
+        "verdict": "pricier",
+        "sentence": "About $0.70 more than Starbucks ($5.55 vs est. $4.85).",
+        "approximate": true
+      }
+    },
+    {
+      "name": "CAFE MADRID",
+      "description": "Sweet and creamy latte",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 0.85,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "HORCHATA LATTE",
+      "description": "mayan rice based latte blended with cinnamon & almond extract",
+      "priceCents": 460,
+      "size": "8 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": null,
+        "confidence": 0,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "HORCHATA LATTE",
+      "description": "mayan rice based latte blended with cinnamon & almond extract",
+      "priceCents": 510,
+      "size": "12 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": null,
+        "confidence": 0,
         "attributes": {
           "flavor": "cinnamon"
         }
@@ -34,9 +99,40 @@
       "comparison": null
     },
     {
-      "name": "Nutella Mocha",
-      "description": "perfect combination of chocolate mocha, nutella & hazelnut",
-      "priceCents": null,
+      "name": "HORCHATA LATTE",
+      "description": "mayan rice based latte blended with cinnamon & almond extract",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": null,
+        "confidence": 0,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "HORCHATA LATTE",
+      "description": "mayan rice based latte blended with cinnamon & almond extract",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": null,
+        "confidence": 0,
+        "attributes": {
+          "flavor": "cinnamon"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "NUTELLA MOCHA",
+      "description": "The perfect combination of Chocolate mocha, nutella & hazelnut",
+      "priceCents": 460,
+      "size": "8 oz",
       "category": "SPECIALTIES",
       "confidence": "high",
       "match": {
@@ -49,22 +145,122 @@
       "comparison": null
     },
     {
-      "name": "Mexican Mocha",
-      "description": "made with ibarra chocolate, real cane sugar & cinnamon",
-      "priceCents": null,
+      "name": "NUTELLA MOCHA",
+      "description": "The perfect combination of Chocolate mocha, nutella & hazelnut",
+      "priceCents": 510,
+      "size": "12 oz",
       "category": "SPECIALTIES",
       "confidence": "high",
       "match": {
-        "conceptId": "mexican_hot_chocolate",
+        "conceptId": "mocha",
         "confidence": 0.85,
-        "attributes": {}
+        "attributes": {
+          "flavor": "nutella"
+        }
       },
       "comparison": null
     },
     {
-      "name": "Mocha Diablo",
+      "name": "NUTELLA MOCHA",
+      "description": "The perfect combination of Chocolate mocha, nutella & hazelnut",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "nutella"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "NUTELLA MOCHA",
+      "description": "The perfect combination of Chocolate mocha, nutella & hazelnut",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "nutella"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "MEXICAN MOCHA",
+      "description": "Made with ibarra chocolate real cane sugar & cinnamon",
+      "priceCents": 460,
+      "size": "8 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "mexican"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "MEXICAN MOCHA",
+      "description": "Made with ibarra chocolate real cane sugar & cinnamon",
+      "priceCents": 510,
+      "size": "12 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "mexican"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "MEXICAN MOCHA",
+      "description": "Made with ibarra chocolate real cane sugar & cinnamon",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "mexican"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "MEXICAN MOCHA",
+      "description": "Made with ibarra chocolate real cane sugar & cinnamon",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "mexican"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "MOCHA DIABLO",
       "description": "hot & spicy spin on a mexican mocha",
-      "priceCents": null,
+      "priceCents": 460,
+      "size": "8 oz",
       "category": "SPECIALTIES",
       "confidence": "high",
       "match": {
@@ -77,9 +273,58 @@
       "comparison": null
     },
     {
-      "name": "Leon Blanco",
-      "description": "classic white chocolate mocha with a hint of mint",
-      "priceCents": null,
+      "name": "MOCHA DIABLO",
+      "description": "hot & spicy spin on a mexican mocha",
+      "priceCents": 510,
+      "size": "12 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.8,
+        "attributes": {
+          "flavor": "diablo"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "MOCHA DIABLO",
+      "description": "hot & spicy spin on a mexican mocha",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.8,
+        "attributes": {
+          "flavor": "diablo"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "MOCHA DIABLO",
+      "description": "hot & spicy spin on a mexican mocha",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
+        "confidence": 0.8,
+        "attributes": {
+          "flavor": "mexican mocha"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "LEON BLANCO",
+      "description": "Classic white chocolate mocha with a hint of mint",
+      "priceCents": 460,
+      "size": "8 oz",
       "category": "SPECIALTIES",
       "confidence": "high",
       "match": {
@@ -92,14 +337,63 @@
       "comparison": null
     },
     {
-      "name": "Crema de Leche",
-      "description": "espresso sweetened with cajeta milk mix in flavor",
-      "priceCents": null,
+      "name": "LEON BLANCO",
+      "description": "Classic white chocolate mocha with a hint of mint",
+      "priceCents": 510,
+      "size": "12 oz",
       "category": "SPECIALTIES",
       "confidence": "high",
       "match": {
-        "conceptId": "cafe_bombon",
+        "conceptId": "white_mocha",
         "confidence": 0.85,
+        "attributes": {
+          "flavor": "mint"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "LEON BLANCO",
+      "description": "Classic white chocolate mocha with a hint of mint",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "white_mocha",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "mint"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "LEON BLANCO",
+      "description": "Classic white chocolate mocha with a hint of mint",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "white_mocha",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "mint"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "CREMA DE LECHE",
+      "description": "espresso sweetened with cajeta milk mix in flavor.",
+      "priceCents": 460,
+      "size": "8 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "espresso",
+        "confidence": 0.8,
         "attributes": {
           "flavor": "cajeta"
         }
@@ -107,9 +401,58 @@
       "comparison": null
     },
     {
-      "name": "Mango Latte",
-      "description": "creamy layer of mango adds a bright & tropical twist to the latte",
-      "priceCents": null,
+      "name": "CREMA DE LECHE",
+      "description": "espresso sweetened with cajeta milk mix in flavor.",
+      "priceCents": 510,
+      "size": "12 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "espresso",
+        "confidence": 0.8,
+        "attributes": {
+          "flavor": "cajeta"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "CREMA DE LECHE",
+      "description": "espresso sweetened with cajeta milk mix in flavor.",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "macchiato",
+        "confidence": 0.7,
+        "attributes": {
+          "flavor": "cajeta"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "CREMA DE LECHE",
+      "description": "espresso sweetened with cajeta milk mix in flavor.",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "espresso",
+        "confidence": 0.8,
+        "attributes": {
+          "flavor": "cajeta"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "MANGO LATTE",
+      "description": "Creamy layer of mango adds a bright and tropical twist to the latte",
+      "priceCents": 460,
+      "size": "8 oz",
       "category": "SPECIALTIES",
       "confidence": "high",
       "match": {
@@ -122,299 +465,309 @@
       "comparison": null
     },
     {
-      "name": "Latte",
-      "priceCents": null,
-      "category": "TRADITIONAL",
-      "confidence": "high",
-      "match": {
-        "conceptId": "latte",
-        "confidence": 1,
-        "attributes": {}
-      },
-      "comparison": null
-    },
-    {
-      "name": "Cappuccino",
-      "priceCents": null,
-      "category": "TRADITIONAL",
-      "confidence": "high",
-      "match": {
-        "conceptId": "cappuccino",
-        "confidence": 1,
-        "attributes": {}
-      },
-      "comparison": null
-    },
-    {
-      "name": "Mocha",
-      "priceCents": null,
-      "category": "TRADITIONAL",
-      "confidence": "high",
-      "match": {
-        "conceptId": "mocha",
-        "confidence": 1,
-        "attributes": {}
-      },
-      "comparison": null
-    },
-    {
-      "name": "White Mocha",
-      "priceCents": null,
-      "category": "TRADITIONAL",
-      "confidence": "high",
-      "match": {
-        "conceptId": "white_mocha",
-        "confidence": 0.95,
-        "attributes": {}
-      },
-      "comparison": null
-    },
-    {
-      "name": "Flavored Latte",
-      "priceCents": null,
-      "category": "TRADITIONAL",
+      "name": "MANGO LATTE",
+      "description": "Creamy layer of mango adds a bright and tropical twist to the latte",
+      "priceCents": 510,
+      "size": "12 oz",
+      "category": "SPECIALTIES",
       "confidence": "high",
       "match": {
         "conceptId": "latte",
         "confidence": 0.85,
-        "attributes": {}
-      },
-      "comparison": null
-    },
-    {
-      "name": "Cold Brew Americano",
-      "priceCents": null,
-      "category": "TRADITIONAL",
-      "confidence": "high",
-      "match": {
-        "conceptId": "cold_brew",
-        "confidence": 0.8,
         "attributes": {
-          "temperature": "iced"
+          "flavor": "mango"
         }
       },
       "comparison": null
     },
     {
-      "name": "Espresso",
-      "priceCents": null,
-      "category": "TRADITIONAL",
+      "name": "MANGO LATTE",
+      "description": "Creamy layer of mango adds a bright and tropical twist to the latte",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "SPECIALTIES",
       "confidence": "high",
       "match": {
-        "conceptId": "espresso",
-        "confidence": 1,
-        "attributes": {}
-      },
-      "comparison": null
-    },
-    {
-      "name": "Macchiato",
-      "priceCents": null,
-      "category": "TRADITIONAL",
-      "confidence": "high",
-      "match": {
-        "conceptId": "macchiato",
-        "confidence": 0.95,
-        "attributes": {}
-      },
-      "comparison": null
-    },
-    {
-      "name": "Affogato",
-      "description": "two espresso shots over vanilla ice cream",
-      "priceCents": null,
-      "category": "ICE CREAM",
-      "confidence": "high",
-      "match": {
-        "conceptId": "affogato",
-        "confidence": 0.95,
+        "conceptId": "latte",
+        "confidence": 0.85,
         "attributes": {
-          "flavor": "vanilla"
+          "flavor": "mango"
+        }
+      },
+      "comparison": {
+        "chainReferenceId": "2",
+        "sizeMatch": "same",
+        "priceDiffCents": 70,
+        "verdict": "pricier",
+        "sentence": "About $0.70 more than Starbucks ($5.55 vs est. $4.85).",
+        "approximate": true
+      }
+    },
+    {
+      "name": "MANGO LATTE",
+      "description": "Creamy layer of mango adds a bright and tropical twist to the latte",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "SPECIALTIES",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 0.85,
+        "attributes": {
+          "flavor": "mango"
         }
       },
       "comparison": null
     },
     {
-      "name": "Matcha Affogato",
-      "description": "matcha mix over vanilla ice cream",
-      "priceCents": null,
-      "category": "ICE CREAM",
+      "name": "LATTE OR CAPPUCCINO",
+      "priceCents": 420,
+      "size": "8 oz",
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
         "conceptId": null,
         "confidence": 0,
-        "attributes": {
-          "flavor": "matcha"
-        }
-      },
-      "comparison": null
-    },
-    {
-      "name": "Deleite Espresso",
-      "description": "two espresso shots over vanilla ice cream bar covered with chocolate & ",
-      "priceCents": null,
-      "category": "ICE CREAM",
-      "confidence": "high",
-      "match": {
-        "conceptId": "affogato",
-        "confidence": 0.85,
         "attributes": {}
       },
       "comparison": null
     },
     {
-      "name": "Hot Chocolate",
-      "priceCents": null,
-      "category": "NON ESPRESSO",
+      "name": "LATTE OR CAPPUCCINO",
+      "priceCents": 460,
+      "size": "12 oz",
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
-        "conceptId": "hot_chocolate",
-        "confidence": 1,
-        "attributes": {
-          "temperature": "hot"
-        }
+        "conceptId": null,
+        "confidence": 0,
+        "attributes": {}
       },
       "comparison": null
     },
     {
-      "name": "Steamers",
-      "priceCents": null,
-      "category": "NON ESPRESSO",
+      "name": "LATTE OR CAPPUCCINO",
+      "priceCents": 490,
+      "size": "16 oz",
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
-        "conceptId": "steamer",
+        "conceptId": null,
+        "confidence": 0,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "REGULAR MOCHA",
+      "priceCents": 460,
+      "size": "8 oz",
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "mocha",
         "confidence": 0.9,
         "attributes": {}
       },
       "comparison": null
     },
     {
-      "name": "Chai Tea Latte",
-      "priceCents": null,
-      "category": "NON ESPRESSO",
+      "name": "REGULAR MOCHA",
+      "priceCents": 510,
+      "size": "12 oz",
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
-        "conceptId": "chai_latte",
-        "confidence": 0.95,
+        "conceptId": "mocha",
+        "confidence": 0.85,
         "attributes": {}
       },
       "comparison": null
     },
     {
-      "name": "Matcha Latte",
-      "priceCents": null,
-      "category": "NON ESPRESSO",
+      "name": "REGULAR MOCHA",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
-        "conceptId": "matcha_latte",
-        "confidence": 1,
+        "conceptId": "mocha",
+        "confidence": 0.85,
         "attributes": {}
       },
       "comparison": null
     },
     {
-      "name": "Iced Mint Matcha",
-      "priceCents": null,
-      "category": "NON ESPRESSO",
+      "name": "REGULAR MOCHA",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
-        "conceptId": "matcha_latte",
+        "conceptId": "mocha",
         "confidence": 0.85,
         "attributes": {
-          "flavor": "mint",
+          "flavor": "regular"
+        }
+      },
+      "comparison": null
+    },
+    {
+      "name": "WHITE MOCHA",
+      "priceCents": 460,
+      "size": "8 oz",
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "white_mocha",
+        "confidence": 0.9,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "WHITE MOCHA",
+      "priceCents": 510,
+      "size": "12 oz",
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "white_mocha",
+        "confidence": 0.9,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "WHITE MOCHA",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "white_mocha",
+        "confidence": 0.9,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "WHITE MOCHA",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "white_mocha",
+        "confidence": 0.9,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "FLAVOR LATTE",
+      "priceCents": 460,
+      "size": "8 oz",
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 0.8,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "FLAVOR LATTE",
+      "priceCents": 510,
+      "size": "12 oz",
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 0.8,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "FLAVOR LATTE",
+      "priceCents": 555,
+      "size": "16 oz",
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 0.8,
+        "attributes": {}
+      },
+      "comparison": {
+        "chainReferenceId": "2",
+        "sizeMatch": "same",
+        "priceDiffCents": 70,
+        "verdict": "pricier",
+        "sentence": "About $0.70 more than Starbucks ($5.55 vs est. $4.85).",
+        "approximate": true
+      }
+    },
+    {
+      "name": "FLAVOR LATTE",
+      "priceCents": 595,
+      "size": "ICED 20 oz",
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "latte",
+        "confidence": 0.9,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "COLD BREW",
+      "priceCents": 410,
+      "size": "12 oz",
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "cold_brew",
+        "confidence": 0.9,
+        "attributes": {
           "temperature": "iced"
         }
       },
       "comparison": null
     },
     {
-      "name": "Taro Purple Latte",
-      "priceCents": null,
-      "category": "NON ESPRESSO",
+      "name": "COLD BREW",
+      "priceCents": 440,
+      "size": "16 oz",
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
-        "conceptId": "taro_latte",
-        "confidence": 0.85,
-        "attributes": {
-          "flavor": "purple"
-        }
-      },
-      "comparison": null
-    },
-    {
-      "name": "Butterfly Latte",
-      "description": "it's a mix of pea flower tea, coconut and vanilla",
-      "priceCents": null,
-      "category": "NON ESPRESSO",
-      "confidence": "high",
-      "match": {
-        "conceptId": null,
-        "confidence": 0,
-        "attributes": {}
-      },
-      "comparison": null
-    },
-    {
-      "name": "Velvet Latte",
-      "description": "sweet & creamy mix inspired by red velvet cake",
-      "priceCents": null,
-      "category": "NON ESPRESSO",
-      "confidence": "high",
-      "match": {
-        "conceptId": null,
-        "confidence": 0,
-        "attributes": {}
-      },
-      "comparison": null
-    },
-    {
-      "name": "Turmeric Latte",
-      "description": "antioxidant drink made with tumeric root & organic spices",
-      "priceCents": null,
-      "category": "NON ESPRESSO",
-      "confidence": "high",
-      "match": {
-        "conceptId": null,
-        "confidence": 0,
-        "attributes": {
-          "flavor": "tumeric"
-        }
-      },
-      "comparison": null
-    },
-    {
-      "name": "Thai led Tea",
-      "priceCents": null,
-      "category": "OTHER DRINKS",
-      "confidence": "high",
-      "match": {
-        "conceptId": "thai_tea",
-        "confidence": 0.8,
-        "attributes": {}
-      },
-      "comparison": null
-    },
-    {
-      "name": "Hot Tea",
-      "priceCents": null,
-      "category": "OTHER DRINKS",
-      "confidence": "high",
-      "match": {
-        "conceptId": "hot_tea",
+        "conceptId": "cold_brew",
         "confidence": 0.95,
         "attributes": {
-          "temperature": "hot"
+          "temperature": "iced"
         }
       },
-      "comparison": null
+      "comparison": {
+        "chainReferenceId": "4",
+        "sizeMatch": "same",
+        "priceDiffCents": -54,
+        "verdict": "similar",
+        "sentence": "About the same as Starbucks ($4.40 vs est. $4.94).",
+        "approximate": true
+      }
     },
     {
-      "name": "Iced Tea",
-      "priceCents": null,
-      "category": "OTHER DRINKS",
+      "name": "COLD BREW",
+      "priceCents": 490,
+      "size": "ICED 20 oz",
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
-        "conceptId": "iced_tea",
+        "conceptId": "cold_brew",
         "confidence": 0.95,
         "attributes": {
           "temperature": "iced"
@@ -423,84 +776,101 @@
       "comparison": null
     },
     {
-      "name": "Italian Soda",
-      "priceCents": null,
-      "category": "OTHER DRINKS",
+      "name": "AMERICANO",
+      "priceCents": 380,
+      "size": "ANY SIZE",
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
-        "conceptId": "italian_soda",
+        "conceptId": "americano",
         "confidence": 1,
+        "attributes": {}
+      },
+      "comparison": {
+        "chainReferenceId": "3",
+        "sizeMatch": "close",
+        "priceDiffCents": -43,
+        "verdict": "similar",
+        "sentence": "About the same as Starbucks ($3.80 vs est. $4.23), sizes are close but not identical.",
+        "approximate": true
+      }
+    },
+    {
+      "name": "ESPRESSO",
+      "priceCents": 350,
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "espresso",
+        "confidence": 0.95,
         "attributes": {}
       },
       "comparison": null
     },
     {
-      "name": "White",
-      "priceCents": null,
-      "category": "FRAPPES",
+      "name": "MACCHIATO",
+      "priceCents": 385,
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
-        "conceptId": "frappe",
-        "confidence": 0.8,
-        "attributes": {
-          "temperature": "blended"
-        }
+        "conceptId": "macchiato",
+        "confidence": 0.9,
+        "attributes": {}
       },
       "comparison": null
     },
     {
-      "name": "Caramel",
-      "priceCents": null,
-      "category": "FRAPPES",
+      "name": "AFFOGATO",
+      "description": "Two espresso shots over vanilla icecream",
+      "priceCents": 590,
+      "category": "TRADITIONALS",
       "confidence": "high",
       "match": {
-        "conceptId": "frappe",
+        "conceptId": "affogato",
+        "confidence": 0.95,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "MATCHA AFFOGATO",
+      "description": "Matcha mix over vanilla icecream",
+      "priceCents": 590,
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": null,
+        "confidence": 0,
+        "attributes": {}
+      },
+      "comparison": null
+    },
+    {
+      "name": "DELEITE ESPRESSO",
+      "description": "Two espresso shots over vanilla icecream bar covered with chocolate and almonds",
+      "priceCents": 590,
+      "category": "TRADITIONALS",
+      "confidence": "high",
+      "match": {
+        "conceptId": "affogato",
         "confidence": 0.85,
         "attributes": {
-          "flavor": "caramel",
-          "temperature": "blended"
-        }
-      },
-      "comparison": null
-    },
-    {
-      "name": "Matcha Vanilla",
-      "priceCents": null,
-      "category": "FRAPPES",
-      "confidence": "high",
-      "match": {
-        "conceptId": "frappe",
-        "confidence": 0.8,
-        "attributes": {
-          "flavor": "matcha vanilla",
-          "temperature": "blended"
-        }
-      },
-      "comparison": null
-    },
-    {
-      "name": "Cookies & Cream",
-      "priceCents": null,
-      "category": "FRAPPES",
-      "confidence": "high",
-      "match": {
-        "conceptId": "frappe",
-        "confidence": 0.85,
-        "attributes": {
-          "flavor": "cookies & cream",
-          "temperature": "blended"
+          "flavor": "vanilla"
         }
       },
       "comparison": null
     }
   ],
   "hook": {
-    "hook": "Leon Coffee House is a family-owned shop in the University District where drinks are topped with hand-poured latte art, such as a bear, cat or bunny. Visitors can enjoy a menu reflecting Mexican culture, including signature drinks like the horchata latte and velvet latte.",
+    "hook": null,
     "sourceUrl": "https://REPLACE-WITH-LEON-URL",
-    "verified": true,
-    "unsupportedClaims": []
+    "verified": false,
+    "unsupportedClaims": [
+      "The horchata latte is an example of the shop's Mexican-inspired drinks."
+    ],
+    "rejectedHook": "Leon Coffee House is a family-owned shop in the University District featuring drinks topped with hand-poured latte art, such as a bear, cat or bunny. Visitors can also enjoy Mexican-inspired drinks like the horchata latte, alongside sandwiches, waffles, and pork tamales."
   },
   "geofence": {
-    "message": "Near Starbucks? Leon Coffee House has Cafe Madrid, {minutes} min away."
+    "message": "Near Starbucks? Leon Coffee House has CAFE MADRID for $4.60, {minutes} min away."
   }
 }
