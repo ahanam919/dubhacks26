@@ -45,6 +45,8 @@ export async function runIngest(payload: Record<string, unknown>): Promise<void>
   const items = site.items;
   // Tier 2: menu photos (team photos, then images on the shop's own pages, then Maps photos if switched on).
   // Only for "deep" shops (see zones.ts), because every photo read is a Gemini call.
+  // PHOTO READS ARE OFF for now (Gemini quota). To turn them back on, remove the /* and */ around this block.
+  /*
   const deep = payload.deep === true;
   if (deep && items.length < MIN_ITEMS) {
     const seen = new Set(items.map((i) => `${i.name.toLowerCase()}|${(i.size ?? "").toLowerCase()}`));
@@ -53,6 +55,7 @@ export async function runIngest(payload: Record<string, unknown>): Promise<void>
       if (!seen.has(k)) { seen.add(k); items.push(it); }
     }
   }
+  */
   // Tier 3: Places has no structured menu items, and we do not invent any.
   if (items.length === 0) console.log(`no menu found for ${name}; stored the shop without items`);
 
