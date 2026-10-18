@@ -11,10 +11,11 @@
 // - If the API can't be reached, it falls back to built-in demo data and an
 //   on-phone distance check, so the demo still works.
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, type TextStyle, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MapView, { Circle, Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import { useFocusEffect } from 'expo-router';
 import { directionsUrl, openUrl } from '../lib/actions';
 import {
   type CheckResult,
@@ -70,6 +71,13 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
   const [countedThisSuggestion, setCountedThisSuggestion] = useState(false);
 
   // The chain zone the pin is inside, if any (same radius the server uses).
+  // Android bug: custom pins are drawn as pictures, and when you leave this screen
+  // (e.g. to Simulate) and come back, some of those pictures get lost and the pins
+  // fall back to Google's default red pin. Bumping this number every time the screen
+  // comes back into view makes every pin redraw itself.
+  const [pinEpoch, setPinEpoch] = useState(0);
+  useFocusEffect(useCallback(() => setPinEpoch((n) => n + 1), []));
+
   const activeChainId = useMemo(() => nearestChainWithin(pin, data)?.id ?? null, [data, pin]);
 
   useEffect(() => {
@@ -227,7 +235,7 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
 
         {data.chains.map((c) => (
           <Marker
-            key={c.id}
+            key={`${c.id}-${pinEpoch}`}
             coordinate={{ latitude: c.lat, longitude: c.lng }}
             title={c.chainName}
             anchor={pinAnchor(22)}
@@ -242,7 +250,7 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
           return (
             <Marker
               // The key includes the highlight so Android redraws the pin when it changes.
-              key={`${s.id}-${suggested ? 'on' : 'off'}`}
+              key={`${s.id}-${suggested ? 'on' : 'off'}-${pinEpoch}`}
               coordinate={{ latitude: s.lat, longitude: s.lng }}
               title={s.name}
               description="Tap here for walking directions"
@@ -261,6 +269,7 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
         })}
 
         <Marker
+          key={`you-${pinEpoch}`}
           coordinate={{ latitude: pin.lat, longitude: pin.lng }}
           title="Pretend I'm here"
           description="Tap the map to move me, or press and hold to drag"
