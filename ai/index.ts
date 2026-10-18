@@ -31,3 +31,9 @@ export const parseQuery: typeof stubs.parseQuery = REAL ? realParseQuery : stubs
 export const scoreAspects = stubs.scoreAspects;
 export const writeGeofenceMessage = realWriteGeofenceMessage;
 export const selectPhotos = stubs.selectPhotos;
+
+import { findDeliveryPrice as realFindDeliveryPrice } from "./find-delivery-price";
+export type { FindDeliveryPriceInput, FindDeliveryPriceResult } from "./find-delivery-price";
+export const findDeliveryPrice: typeof realFindDeliveryPrice = REAL
+  ? realFindDeliveryPrice
+  : async () => ({ priceCents: null, sourceUrl: null, snippet: null });
