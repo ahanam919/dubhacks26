@@ -56,6 +56,14 @@ export function fetchMapData(apiBaseUrl: string): Promise<MapData> {
   return getJson<MapData>(`${apiBaseUrl}/geofence/map-data`);
 }
 
+export type WalkRoute = { points: LatLng[]; source: 'google' | 'straight'; durationMinutes?: number };
+
+/** Walking route that follows streets (or a straight line if the server can't get one). */
+export async function fetchWalkRoute(apiBaseUrl: string, from: LatLng, to: LatLng): Promise<WalkRoute> {
+  const q = `fromLat=${from.lat}&fromLng=${from.lng}&toLat=${to.lat}&toLng=${to.lng}`;
+  return getJson<WalkRoute>(`${apiBaseUrl}/geofence/walk-route?${q}`);
+}
+
 /** Ask the server: is this spot near a chain, and which local shop should we suggest? */
 export function checkLocation(
   apiBaseUrl: string,
