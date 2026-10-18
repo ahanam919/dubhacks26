@@ -50,7 +50,8 @@ export interface GeofenceResult { message: string }   // contains the literal {m
 export interface ComparePriceInput {
   chain: string;
   local: { name: string; priceCents: number | null; size?: string };
-  chainRef: { id: string; priceCents: number | null; size?: string; asOf: string };
+  // approximate: true when the chain price is an estimate, not a verified price
+  chainRef: { id: string; priceCents: number | null; size?: string; asOf: string; approximate?: boolean };
 }
 // null result = not comparable (a price is missing or the sizes don't match)
 export interface ComparePriceResult {
@@ -59,6 +60,7 @@ export interface ComparePriceResult {
   priceDiffCents: number;
   verdict: "cheaper" | "similar" | "pricier";
   sentence: string;
+  approximate?: boolean;
 }
 
 export interface PhotoCandidate { id: string; url: string; source: "website" | "places"; authorName?: string }
