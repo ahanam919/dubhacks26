@@ -46,7 +46,7 @@ export default function MapScreen({ apiBaseUrl, deviceId = "demo-device" }: Prop
   const [status, setStatus] = useState("Drag the blue pin next to a chain.");
 
   useEffect(() => {
-    void setupNotifications();
+    try { setupNotifications().catch((e) => console.warn("Notification setup failed", e)); } catch (e) { console.warn("Notification setup failed", e); }
 
     if (!apiBaseUrl) return;
     fetchMapData(apiBaseUrl, DEMO_CENTER)
