@@ -2,9 +2,9 @@ import "./env";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { pool } from "./db";
-import { geofenceMock } from "./geofence/mockRoutes";
-// When your teammate's real routes exist, swap geofenceMock for her plugin:
-// import { geofenceRoutes } from "./geofence/routes";
+import { geofenceRoutes } from "./geofence/routes";
+// The mock is kept for offline testing: swap geofenceRoutes for geofenceMock if needed.
+// import { geofenceMock } from "./geofence/mockRoutes";
 
 const app = Fastify({ logger: true });
 await app.register(cors, { origin: true });
@@ -18,7 +18,7 @@ app.get("/health/db", async () => {
   return { ok: true, ms: Date.now() - t0 };
 });
 
-await app.register(geofenceMock, { prefix: "/geofence" });
+await app.register(geofenceRoutes, { prefix: "/geofence" });
 
 const port = Number(process.env.PORT ?? 3000);
 await app.listen({ port, host: "0.0.0.0" });

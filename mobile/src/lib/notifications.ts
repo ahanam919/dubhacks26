@@ -3,18 +3,17 @@
 // Uses a real local notification when expo-notifications is available (a development
 // build, or Expo Go on iPhone). Expo Go on Android doesn't include all of its native
 // parts, so there it falls back to an in-app pop-up with a Directions button.
-// Either way the demo works.
 //
-// Call setupNotifications() once when the app starts.
+// Call setupNotifications() once when the screen that sends alerts opens.
 
-import { Alert, Platform } from "react-native";
-import Constants, { ExecutionEnvironment } from "expo-constants";
-import type * as NotificationsTypes from "expo-notifications";
-import { openWalkingDirections } from "./directions";
+import { Alert, Platform } from 'react-native';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
+import type * as NotificationsTypes from 'expo-notifications';
+import { directionsUrl, openUrl } from './actions';
 
 declare const require: (id: string) => unknown;
 
-const CHANNEL_ID = "suggestions";
+const CHANNEL_ID = 'suggestions';
 
 type NotificationsModule = typeof NotificationsTypes;
 
@@ -27,15 +26,15 @@ function loadNotifications(): NotificationsModule | null {
   // Expo Go on Android is missing some of expo-notifications' native parts, and even
   // a caught failure shows a red error screen there. So don't load it at all.
   const inExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
-  if (Platform.OS === "android" && inExpoGo) {
+  if (Platform.OS === 'android' && inExpoGo) {
     cached = null;
     return cached;
   }
 
   try {
-    cached = require("expo-notifications") as NotificationsModule;
+    cached = require('expo-notifications') as NotificationsModule;
   } catch (err) {
-    console.warn("expo-notifications unavailable here; using in-app pop-ups instead", err);
+    console.warn('expo-notifications unavailable here; using in-app pop-ups instead', err);
     cached = null;
   }
   return cached;
@@ -60,31 +59,33 @@ export async function setupNotifications(): Promise<boolean> {
     });
 
     // Android needs a high-importance channel for the notification to pop up as a banner.
-    if (Platform.OS === "android") {
+    if (Platform.OS === 'android') {
       await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-        name: "Local suggestions",
+        name: 'Local suggestions',
         importance: Notifications.AndroidImportance.HIGH,
       });
     }
 
-    // When someone taps the notification, open walking directions to that shop.
+    // Tapping the notification opens walking directions to that shop.
+    // TODO: open the shop card (/shop/[id]) instead, once the app's shop data
+    // comes from the same database as the geofence server.
     if (!tapListener) {
       tapListener = Notifications.addNotificationResponseReceivedListener((response) => {
         const data = response.notification.request.content.data as
           | { lat?: number; lng?: number }
           | undefined;
-        if (typeof data?.lat === "number" && typeof data?.lng === "number") {
-          void openWalkingDirections(data.lat, data.lng);
+        if (typeof data?.lat === 'number' && typeof data?.lng === 'number') {
+          void openUrl(directionsUrl({ lat: data.lat, lng: data.lng }));
         }
       });
     }
 
     // Android 13+ and iPhone ask the user for permission.
     const { status } = await Notifications.requestPermissionsAsync();
-    if (status !== "granted") cached = null; // no permission → use in-app pop-ups
-    return status === "granted";
+    if (status !== 'granted') cached = null; // no permission: use in-app pop-ups
+    return status === 'granted';
   } catch (err) {
-    console.warn("Notification setup failed; using in-app pop-ups instead", err);
+    console.warn('Notification setup failed; using in-app pop-ups instead', err);
     cached = null;
     return false;
   }
@@ -106,17 +107,17 @@ export async function showSuggestion(params: {
           body: params.message,
           data: { shopId: params.shopId, lat: params.lat, lng: params.lng },
         },
-        trigger: Platform.OS === "android" ? { channelId: CHANNEL_ID } : null, // show now
+        trigger: Platform.OS === 'android' ? { channelId: CHANNEL_ID } : null, // show now
       });
       return;
     } catch (err) {
-      console.warn("Notification failed; showing in-app pop-up instead", err);
+      console.warn('Notification failed; showing in-app pop-up instead', err);
     }
   }
 
   // Fallback: an in-app pop-up with the same message and a Directions button.
   Alert.alert(params.title, params.message, [
-    { text: "Not now", style: "cancel" },
-    { text: "Directions", onPress: () => void openWalkingDirections(params.lat, params.lng) },
+    { text: 'Not now', style: 'cancel' },
+    { text: 'Directions', onPress: () => void openUrl(directionsUrl({ lat: params.lat, lng: params.lng })) },
   ]);
 }
