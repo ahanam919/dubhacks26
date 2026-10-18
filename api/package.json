@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "square:check": "node scripts/square-check.mjs",
+    "square:test-order": "node scripts/square-test-order.mjs",
+    "sql": "node scripts/run-sql.mjs"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.0",
