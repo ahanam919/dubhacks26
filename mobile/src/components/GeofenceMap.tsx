@@ -284,11 +284,30 @@ export default function GeofenceMap({ apiBaseUrl, deviceId = 'demo-device' }: Pr
         </Marker>
       </MapView>
 
-      {/* Legend */}
-      <View style={[styles.legend, { top: insets.top + 8 }]} pointerEvents="none">
-        <LegendItem color={colors.primary} label="You" />
-        <LegendItem color={colors.ink} label="Local" />
-        <LegendItem color={colors.chainMuted} label="Chain" />
+      {/* Logo: the app name wraps "around the corner" of the color key. "AROUND THE"
+          runs up the left side, a small blue bend turns the corner, and "CORNER" runs
+          along the top. */}
+      <View
+        style={[styles.logo, { top: insets.top + 8 }]}
+        pointerEvents="none"
+        accessible
+        accessibilityRole="header"
+        accessibilityLabel="Around the Corner"
+      >
+        <View style={styles.logoSideBox}>
+          <Text style={styles.logoWord} numberOfLines={1}>
+            AROUND THE
+          </Text>
+        </View>
+        <View style={styles.logoBend} />
+        <Text style={[styles.logoWord, styles.logoTop]} numberOfLines={1}>
+          CORNER
+        </Text>
+        <View style={styles.legend}>
+          <LegendItem color={colors.primary} label="You" />
+          <LegendItem color={colors.ink} label="Local" />
+          <LegendItem color={colors.chainMuted} label="Chain" />
+        </View>
       </View>
 
       {/* Map controls: zoom in/out, and back to the whole area */}
@@ -352,6 +371,11 @@ function LegendItem({ color, label }: { color: string; label: string }) {
     </View>
   );
 }
+
+// Logo layout: where "AROUND THE" starts (from the top of the logo) and how long its
+// sideways box is.
+const LOGO_SIDE_TOP = 28;
+const LOGO_SIDE_LEN = 110;
 
 // --- Pins ---------------------------------------------------------------------------
 // Classic teardrop map pins in the app's colors: you = blue, local shops = dark,
@@ -481,14 +505,53 @@ function demoCheck(spot: LatLng, data: MapData): CheckResult {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  logo: { position: 'absolute', left: spacing.lg, width: 150, height: LOGO_SIDE_TOP + LOGO_SIDE_LEN },
+  logoWord: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '800',
+    letterSpacing: 1.6,
+    color: colors.ink,
+    // A soft white glow so the name stays readable over any part of the map.
+    textShadowColor: 'rgba(255,255,255,0.95)',
+    textShadowRadius: 5,
+    textShadowOffset: { width: 0, height: 0 },
+  },
+  // "AROUND THE" is laid out sideways, then turned to read bottom-to-top, ending
+  // at the corner. The box is a bit wider than the words so they never get cut off.
+  logoSideBox: {
+    position: 'absolute',
+    left: 0,
+    top: LOGO_SIDE_TOP,
+    width: LOGO_SIDE_LEN,
+    height: 16,
+    alignItems: 'flex-end',
+    transform: [
+      { translateX: 8 - LOGO_SIDE_LEN / 2 },
+      { translateY: LOGO_SIDE_LEN / 2 - 8 },
+      { rotate: '-90deg' },
+    ],
+  },
+  logoBend: {
+    position: 'absolute',
+    left: 7,
+    top: 7,
+    width: 11,
+    height: 13,
+    borderTopWidth: 2,
+    borderLeftWidth: 2,
+    borderTopLeftRadius: 10,
+    borderColor: colors.primary,
+  },
+  logoTop: { position: 'absolute', left: 22, top: 0, color: colors.primary },
   legend: {
     position: 'absolute',
-    left: spacing.lg,
-    flexDirection: 'row',
-    gap: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 6,
-    borderRadius: radius.pill,
+    left: 24,
+    top: 26,
+    gap: 5,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: radius.md,
     backgroundColor: 'rgba(255,255,255,0.92)',
     borderWidth: 1,
     borderColor: colors.line,
