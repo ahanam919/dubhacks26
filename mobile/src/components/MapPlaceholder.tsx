@@ -22,7 +22,6 @@ export default function MapPlaceholder({ shops, onPressShop }: Props) {
     <View style={styles.map}>
       <View style={[styles.road, { top: '30%', transform: [{ rotate: '-8deg' }] }]} />
       <View style={[styles.road, { top: '58%', transform: [{ rotate: '5deg' }] }]} />
-      <Text style={styles.note}>Map placeholder. Google Maps replaces this later.</Text>
 
       {shops.map((shop) => {
         const x = 12 + ((shop.lng - minLng) / spanLng) * 76;
