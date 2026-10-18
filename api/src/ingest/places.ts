@@ -82,3 +82,22 @@ const LEVELS: Record<string, number> = {
   PRICE_LEVEL_EXPENSIVE: 3, PRICE_LEVEL_VERY_EXPENSIVE: 4,
 };
 export const priceLevelToInt = (p?: string): number | null => (p && p in LEVELS ? LEVELS[p] : null);
+// Downloads one Places photo into memory (never saved). The API key goes in a header and only to
+// places.googleapis.com; the final image URL Google returns has no key in it. Nothing here is logged.
+export async function fetchPlacePhoto(photoName: string, maxWidthPx = 1600): Promise<{ mimeType: string; data: Buffer } | null> {
+  try {
+    const meta = await places<{ photoUri?: string }>(
+      `/${photoName}/media?maxWidthPx=${maxWidthPx}&skipHttpRedirect=true`,
+      "photoUri",
+    ).catch(() => null);
+    if (!meta?.photoUri) return null;
+    const res = await fetch(meta.photoUri, { signal: AbortSignal.timeout(20_000) });
+    if (!res.ok) return null;
+    const mimeType = (res.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
+    if (!["image/jpeg", "image/png", "image/webp"].includes(mimeType)) return null;
+    const data = Buffer.from(await res.arrayBuffer());
+    return data.byteLength > 0 && data.byteLength <= 4 * 1024 * 1024 ? { mimeType, data } : null;
+  } catch {
+    return null;
+  }
+}
