@@ -14,6 +14,7 @@ CREATE TABLE shop (
   rating           numeric(2,1),
   price_level      smallint,
   badges           text[] NOT NULL DEFAULT '{}',
+  milk_options     text[] NOT NULL DEFAULT '{}',
   aspects          jsonb,
   aspects_count    integer,
   aspects_as_of    date,
@@ -51,19 +52,28 @@ CREATE TABLE menu_item (
   shop_id            uuid NOT NULL REFERENCES shop(id) ON DELETE CASCADE,
   name               text NOT NULL,
   description        text,
+  -- NULL means "price not listed", never $0. When the worker sets price_cents
+  -- it must also set price_source: menu_page, ordering_page or team_entered.
   price_cents        integer,
+  price_source       text,
   size               text,
   concept_id         text REFERENCES concept(id),
   concept_confidence real,
-  attributes         jsonb NOT NULL DEFAULT '{}',
+  attributes         jsonb NOT NULL DEFAULT '{}',   -- category, extras, flavor...
   status             text NOT NULL DEFAULT 'pending'
                      CHECK (status IN ('pending', 'verified', 'stale')),
   source_url         text,
   last_checked_at    timestamptz,
-  created_at         timestamptz NOT NULL DEFAULT now()
+  created_at         timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT menu_item_price_positive
+    CHECK (price_cents IS NULL OR price_cents > 0)
 );
 CREATE INDEX menu_item_shop_idx    ON menu_item (shop_id);
 CREATE INDEX menu_item_concept_idx ON menu_item (concept_id);
+-- Re-running the worker updates rows instead of duplicating them.
+-- size is often NULL, so treat a missing size as an empty string.
+CREATE UNIQUE INDEX menu_item_unique_idx
+  ON menu_item (shop_id, name, coalesce(size, ''));
 
 CREATE TABLE chain_reference (
   id                 serial PRIMARY KEY,
@@ -103,6 +113,9 @@ CREATE TABLE price_comparison (
   local_price_cents  integer NOT NULL,
   chain_price_cents  integer NOT NULL,
   delta_cents        integer GENERATED ALWAYS AS (local_price_cents - chain_price_cents) STORED,
+  size_match         text CHECK (size_match IN ('same', 'close')),
+  verdict            text CHECK (verdict IN ('cheaper', 'similar', 'pricier')),
+  sentence           text,
   computed_at        timestamptz NOT NULL DEFAULT now(),
   UNIQUE (menu_item_id, chain_reference_id)
 );
@@ -112,7 +125,7 @@ CREATE TABLE geofence_message (
   shop_id      uuid NOT NULL REFERENCES shop(id) ON DELETE CASCADE,
   chain_name   text NOT NULL,
   menu_item_id uuid REFERENCES menu_item(id) ON DELETE SET NULL,
-  message      text NOT NULL,
+  message      text NOT NULL,          -- contains a literal {minutes} placeholder
   generated_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (shop_id, chain_name)
 );
@@ -164,12 +177,9 @@ SELECT add_continuous_aggregate_policy('search_counts_hourly',
   end_offset        => INTERVAL '1 minute',
   schedule_interval => INTERVAL '1 minute');
 
--- ---------- menu_item price provenance ----------
--- price_cents stays nullable: NULL means "price not listed", never $0.
--- Whenever the worker sets price_cents it must also set price_source
--- (e.g. 'menu_page', 'google_places', 'estimated'; list TBD with AI teammate).
-ALTER TABLE menu_item ADD COLUMN price_source text;
-
-ALTER TABLE menu_item
-  ADD CONSTRAINT menu_item_price_positive
-  CHECK (price_cents IS NULL OR price_cents > 0);
+-- ---------- OPTIONAL, add once the worker writes real data ----------
+-- ALTER TABLE menu_item ADD CONSTRAINT menu_item_price_source_valid
+--   CHECK (price_source IS NULL
+--          OR price_source IN ('menu_page', 'ordering_page', 'team_entered'));
+-- ALTER TABLE menu_item ADD CONSTRAINT menu_item_price_has_source
+--   CHECK (price_cents IS NULL OR price_source IS NOT NULL);
