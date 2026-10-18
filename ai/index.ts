@@ -8,6 +8,8 @@ import { verifyHook as realVerifyHook } from "./verify";
 import { makeHook as realMakeHook } from "./make-hook";
 import { comparePrice as realComparePrice } from "./compare-price";
 import type * as T from "./types";
+import { parseQuery as realParseQuery } from "./parse-query";
+import { writeGeofenceMessage as realWriteGeofenceMessage } from "./geofence-message";
 
 const REAL = process.env.AI_REAL === "1";
 
@@ -25,7 +27,7 @@ export const comparePrice = async (i: T.ComparePriceInput): Promise<T.ComparePri
 
 // Still stubs for now.
 export const embedText = stubs.embedText;
-export const parseQuery = stubs.parseQuery;
+export const parseQuery: typeof stubs.parseQuery = REAL ? realParseQuery : stubs.parseQuery;
 export const scoreAspects = stubs.scoreAspects;
-export const writeGeofenceMessage = stubs.writeGeofenceMessage;
+export const writeGeofenceMessage = realWriteGeofenceMessage;
 export const selectPhotos = stubs.selectPhotos;

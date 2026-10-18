@@ -15,8 +15,9 @@ export function primaryActionFor(shop: Shop): PrimaryAction {
   }
 }
 
-export function directionsUrl(shop: Shop): string {
-  return `https://www.google.com/maps/dir/?api=1&destination=${shop.lat},${shop.lng}`;
+// Walking directions in Google Maps. Takes anything with lat/lng (a shop, a map pin).
+export function directionsUrl(place: Pick<Shop, 'lat' | 'lng'>): string {
+  return `https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lng}&travelmode=walking`;
 }
 
 export async function openUrl(url: string): Promise<void> {

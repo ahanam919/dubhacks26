@@ -73,7 +73,7 @@ describe("findNearbyChain", () => {
 });
 
 describe("findLocalShops", () => {
-  const close: Shop = { id: "s1", name: "Bluebird", ...offset(BASE, 400, 180) };
+  const close: Shop = { id: "s1", name: "Bluebird", ...offset(BASE, 380, 180) };
   const closer: Shop = { id: "s2", name: "Corner Cafe", ...offset(BASE, 150, 270) };
   const tooFar: Shop = { id: "s3", name: "Far Roasters", ...offset(BASE, 1200) };
 
@@ -82,7 +82,7 @@ describe("findLocalShops", () => {
     expect(result.map((s) => s.shop.id)).toEqual(["s2", "s1"]);
   });
 
-  it("reports walking minutes (400 m ≈ 5 min)", () => {
+  it("reports walking minutes (380 m ≈ 5 min)", () => {
     const [shop] = findLocalShops(BASE, [close]);
     expect(shop.walkMinutes).toBe(5);
   });
